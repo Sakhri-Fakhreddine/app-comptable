@@ -1,0 +1,33 @@
+# Laravel (backend)
+backend-api/vendor/
+backend-api/node_modules/
+backend-api/.env
+backend-api/.idea/
+backend-api/storage/*.key
+backend-api/storage/framework/cache/*
+backend-api/storage/framework/sessions/*
+backend-api/storage/framework/views/*
+backend-api/storage/logs/*
+
+# Angular (frontend)
+frontend-web/node_modules/
+frontend-web/dist/
+frontend-web/.angular/
+frontend-web/.env
+frontend-web/.idea/
+
+# Flutter (mobile app)
+mobile-app/build/
+mobile-app/.dart_tool/
+mobile-app/.packages
+mobile-app/.flutter-plugins
+mobile-app/.flutter-plugins-dependencies
+mobile-app/pubspec.lock
+mobile-app/.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
