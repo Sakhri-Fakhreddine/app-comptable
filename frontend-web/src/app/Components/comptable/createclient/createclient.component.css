@@ -1,0 +1,76 @@
+/* Reuse login-container */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* start under header */
+  align-items: center;
+  padding-top: 100px; /* space for header */
+  background: linear-gradient(to bottom right, black, red);
+}
+
+/* Card / Form */
+.login-form {
+  width: 100%;
+  max-width: 70rem;
+  padding: 2rem;
+  background: #ffffff;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  border-radius: 0.75rem;
+}
+
+/* Section heading */
+.section-heading h2 {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Input container with icons */
+.input-container {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.email-input, .password-input {
+  width: 100%;
+  padding: 10px;
+  padding-left: 40px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  border: none;
+  background-color: #f8f8f8;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Submit Button */
+.submit-btn {
+  width: auto;
+  min-width: 200px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #b8860b;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #cd9b1d;
+}
+
+.submit-btn:disabled {
+  background-color: #aaa;
+}

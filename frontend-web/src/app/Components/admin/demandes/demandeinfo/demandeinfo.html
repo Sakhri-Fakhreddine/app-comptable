@@ -1,0 +1,207 @@
+<div class="list-container">
+    <app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+    <div class="page-header">
+      <h4 class="page-title">Demandes</h4>
+      <ul class="breadcrumbs">
+        <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+        <li class="separator"><i class="icon-arrow-right"></i></li>
+        <li class="nav-item"><a routerLink="/admin/demandeslist">Demandes</a></li>
+        <li class="separator"><i class="icon-arrow-right"></i></li>
+        <li class="nav-item"><a routerLink="/admin/demande-info">Details de la Demande</a></li>
+      </ul>
+    </div>
+  
+    <div class="list-card">
+      <div class="section-heading">
+        <h2>Details de la Demande</h2>
+      </div>
+  
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Patientez ...</p>
+      </div>
+  
+      <div class="table-responsive" *ngIf="!isLoading">
+        <table class="table table-striped table-centered">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Comptable Associé</th>
+              <th>Type d'Abonnement choisis</th>
+              <th>Abonnement Associé</th>
+              <th>Etat De Demande</th>
+              <th>Commentaires</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ demande.idDemande }}</td>
+              <td>
+                <div *ngFor="let item of getDetailsArray(detailsComptable)">
+                  <strong>{{ item.key | titlecase }}:</strong> {{ item.value }} <br>
+                </div>
+                <br>
+                <button class="btn btn-warning" type="button" data-bs-toggle="modal" data-bs-target="#emailModal">
+                  Contacter Comptable
+                </button>
+              </td>
+  
+              <td>{{ demande.typeabonnement }}</td>
+              <td>{{ demande.abonnementsglobals_idabonnementglobals || 'Aucun abonnement associe' }}</td>
+              <td>
+                <span *ngIf="demande.etat_demande === 'acceptée'" class="badge badge-success fs-5 px-3 py-2">{{ demande.etat_demande }}</span>
+                <span *ngIf="demande.etat_demande === 'refusée'" class="badge badge-danger fs-5 px-3 py-2">{{ demande.etat_demande }}</span>
+                <span *ngIf="demande.etat_demande === 'en cours de traitement'" class="badge badge-warning fs-5 px-3 py-2">{{ demande.etat_demande }}</span>
+              </td>
+              <td>{{ demande.commentaire || 'Aucun Commentaire a afficher' }}</td>
+  
+              <td *ngIf="demande.etat_demande === 'en cours de traitement'">
+                <div class="d-flex justify-content-center gap-2">
+                  <button class="btn btn-success btn-sm w-100" type="button" data-bs-toggle="modal" data-bs-target="#acceptModal" (click)="openAcceptModal(demande)">
+                    Accepter
+                  </button>
+                  <button class="btn btn-danger btn-sm w-100" type="button" data-bs-toggle="modal" data-bs-target="#refuseModal" (click)="openRefuseModal(demande)">
+                    Refuser
+                  </button>
+                </div>
+              </td>
+              
+  
+              <td *ngIf="demande.etat_demande === 'refusée' || demande.etat_demande === 'acceptée'">
+                Demande a été {{ demande.etat_demande }} le {{ demande.updated_at | date:'dd-MM-yyyy' }}
+              </td>
+              
+            </tr>
+          </tbody>
+        </table>
+  
+        <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Email Modal (static, centered, large) -->
+  <div class="modal fade" id="emailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center">Envoyer un Email à {{ detailsComptable?.Nomprenom }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form (ngSubmit)="sendEmail(demandeEmail)">
+          <div class="modal-body">
+            <div class="mb-4">
+              <label class="form-label fw-bold mb-2">
+                <i class="fas fa-envelope me-2"></i>Receveur
+              </label>
+              <input type="text" class="form-control" [value]="detailsComptable?.email" disabled>
+            </div>
+  
+            <div class="mb-4">
+              <label class="form-label fw-bold mb-2">
+                <i class="fas fa-tag me-2"></i>Objet
+              </label>
+              <input type="text" class="form-control" [(ngModel)]="demandeEmail.subject" name="subject" required placeholder="Entrer l'objet de votre email">
+            </div>
+  
+            <div class="mb-4">
+              <label class="form-label fw-bold mb-2">
+                <i class="fas fa-comment me-2"></i>Message
+              </label>
+              <textarea class="form-control" rows="6" [(ngModel)]="demandeEmail.message" name="message" required placeholder="Ecrire votre message ici..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-paper-plane me-2"></i>Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Refuse Modal (static, centered, large) -->
+  <div class="modal fade" id="refuseModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center">Refuser la demande</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form (ngSubmit)="RefuseDemande()">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="comment" class="form-label">Commentaire:</label>
+              <textarea class="form-control" id="comment" [(ngModel)]="comment" name="comment" rows="4" required placeholder="Saisir un commentaire"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Refuser</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Accept Modal (static, centered, large) -->
+  <div class="modal fade" id="acceptModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center">Accepter la demande</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form (ngSubmit)="AcceptDemande()">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold mb-2">
+                <i class="fas fa-tags me-2"></i>Type d'abonnement
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [value]="currentDemande?.typeabonnement"
+                disabled
+              >
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold mb-2">
+                <i class="fas fa-dollar-sign me-2"></i>Montant (Dt)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                class="form-control"
+                [(ngModel)]="montant"
+                name="montant"
+                required
+              >
+            </div>
+            <div class="mb-3">
+              <label for="comment" class="form-label fw-bold">
+                <i class="fas fa-comment-dots me-2"></i>Commentaire
+              </label>
+              <textarea
+                class="form-control"
+                id="comment"
+                [(ngModel)]="comment"
+                name="comment"
+                rows="4"
+                required
+                placeholder="Saisir un commentaire"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Fermer
+            </button>
+            <button type="submit" class="btn btn-primary">Accepter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

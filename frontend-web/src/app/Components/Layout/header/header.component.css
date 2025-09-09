@@ -1,0 +1,107 @@
+.navbar-brand {
+    align-self: center;
+}
+/* Ultimate right alignment in navbar */
+.ms-auto {
+    margin-left: auto;
+    align-self: center;
+  }
+  
+  /* Dark golden button */
+  .btn-dark-golden {
+    background-color: #b8860b; /* dark goldenrod */
+    color: white;
+    border: none;
+    padding: 0.4rem 0.6rem;
+  }
+  
+  /* Hover / focus styles */
+  .btn-dark-golden:hover,
+  .btn-dark-golden:focus {
+    background-color: #8b6508;
+    color: white;
+    box-shadow: 0 0 8px rgba(184, 134, 11, 0.7);
+  }
+  
+  /* Hamburger icon */
+  .hamburger-icon {
+    display: inline-block;
+    width: 20px;
+    height: 14px;
+    position: relative;
+  }
+  
+  .hamburger-icon span {
+    display: block;
+    height: 2px;
+    background-color: white;
+    margin: 4px 0;
+    border-radius: 1px;
+  }
+  
+
+
+
+  /* //////////////////// */
+  
+
+  /* Dark gold dropdown toggle button */
+.dark-gold-dropdown-toggle {
+  background-color: #b8860b; /* Dark gold */
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.3s ease;
+}
+
+.dark-gold-dropdown-toggle:hover {
+  background-color: #d4af37; /* Lighter gold on hover */
+  color: #fff;
+}
+
+/* Dropdown menu style */
+.dark-gold-dropdown-menu {
+  background-color: #3a2e0b; /* Dark background */
+  border: none;
+  border-radius: 8px;
+  min-width: 220px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+/* Dropdown links */
+.dark-gold-dropdown-menu .dropdown-item {
+  color: #fff;
+  padding: 10px 16px;
+  transition: background 0.3s;
+}
+
+.dark-gold-dropdown-menu .dropdown-item:hover {
+  background-color: #b8860b;
+  color: #fff;
+}
+
+/* User box */
+.user-box {
+  background-color: #4b3a0b;
+  border-radius: 8px;
+}
+
+/* Animation for dropdown */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated.fadeInDown {
+  animation: fadeInDown 0.4s ease forwards;
+}

@@ -1,0 +1,88 @@
+<!-- Banner -->
+<div class="banner header-text"></div>
+<app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+
+       <!-- Loading -->
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Chargement des informations de la déclaration...</p>
+      </div> 
+
+       <!-- Error  
+      <div *ngIf="alertType === 'error'" class="alert alert-danger text-center">
+        {{ alertMessage }}
+      </div> -->
+
+      <!-- Declaration Card -->
+      <div class="info-card">
+        <div class="card-header-custom">
+          Paramètres de la Déclaration : {{ declarationForm.get('typedeclaration')?.value }}
+        </div>
+
+        <form [formGroup]="declarationForm" (ngSubmit)="submitForm()">
+          <div class="table-responsive">
+            <table class="info-table table table-borderless">
+              <tbody>
+                <tr>
+                  <th>Type de déclaration</th>
+                  <td><input formControlName="typedeclaration" class="form-control" readonly></td>
+                </tr>
+                <tr>
+                  <th>Type de déclaration (Arabe)</th>
+                  <td><input formControlName="typedeclarationArabe" class="form-control" readonly></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h5 class="mt-3">Lignes associées</h5>
+          <div formArrayName="lines" *ngIf="lines">
+            <div *ngFor="let line of lines.controls; let i=index" [formGroupName]="i" class="row mb-2 align-items-center">
+
+              <div class="col-md-2 mb-2">
+                <select formControlName="libellee" class="form-control" (change)="onLibelleChange(i)">
+                  <option value="" disabled>-- Sélectionner Libellée --</option>
+                  <option *ngFor="let key of libelleKeys" [value]="key">{{ key }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-3 mb-2">
+                <input formControlName="libelleeArabe" class="form-control" readonly>
+              </div>
+
+              <div class="col-md-2 mb-2">
+                <input formControlName="compte_comptable" class="form-control" placeholder="Compte Comptable">
+              </div>
+
+              <div class="col-md-2 mb-2">
+                <select formControlName="debit_credit" class="form-control">
+                  <option value="Débit">Débit</option>
+                  <option value="Crédit">Crédit</option>
+                </select>                
+              </div>
+
+              <div class="col-md-1 mb-2">
+                <input formControlName="rang" type="number" class="form-control" placeholder="Rang">
+              </div>
+
+              <div class="col-md-2 mb-2">
+                <button type="button" class="btn btn-danger btn- md" (click)="removeLine(i)">Supprimer</button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="mt-4 text-center button-group">
+            <button type="button" class="btn btn-info btn-md mb-3" (click)="addLine()">Ajouter une autre Ligne</button>
+            <br>
+            <button type="submit" class="btn btn-success btn-md">Enregistrer</button>
+          </div>          
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

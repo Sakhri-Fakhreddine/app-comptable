@@ -1,0 +1,40 @@
+.alert {
+    position: fixed;
+    top: 120px; /* Adjust based on navbar height */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    max-width: 600px;
+  }
+  
+  .alert-success {
+    background-color: #13032c;
+    color: white;
+  }
+  
+  .alert-error {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .alert-warning {
+    background-color: #ffc107;
+    color: black;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 16px;
+  }

@@ -1,0 +1,109 @@
+<div class="list-container">
+  <!-- Alert -->
+  <app-alert
+    [message]="alertMessage"
+    [type]="alertType"
+    (closed)="closeAlert()"
+  ></app-alert>
+
+  <div class="page-header">
+    <h4 class="page-title">Paramètres des Lignes de Déclaration</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item">
+        <a routerLink="/admin/defaultdeclarationlinesettings">Paramètres par défaut</a>
+      </li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item">
+        <a routerLink="/admin/defaultdeclarationlinesettings">Paramètres des lignes de déclaration</a>
+      </li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item">
+        <a routerLink="/admin/adddeclarationlinesetting">Ajouter Paramètres lignes de déclaration</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="form-card">
+    <h3>Ajouter un paramètre de ligne de déclaration</h3>
+
+    <form [formGroup]="declarationLineForm" (ngSubmit)="onSubmit()">
+
+      <!-- Select Declaration Type -->
+      <div class="form-group">
+        <label for="declarationType">Type de Déclaration</label>
+        <select
+          id="declarationType"
+          class="form-control"
+          formControlName="declarationType"
+          (change)="onDeclarationTypeChange($event)"
+        >
+          <option *ngFor="let type of declarationTypes" [value]="type">
+            {{ type }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Libellé (Français) -->
+      <div class="form-group">
+        <label for="libellee">Libellé (Français)</label>
+        <select
+          id="libellee"
+          class="form-control"
+          formControlName="libellee"
+          (change)="onLibelleeChange($event)"
+        >
+          <option *ngFor="let lib of (libelleMap | keyvalue)" [value]="lib.key">
+            {{ lib.key }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Libellé Arabe (Auto-filled) -->
+      <div class="form-group">
+        <label for="libelleeArabe">Libellé (Arabe)</label>
+        <input
+          type="text"
+          id="libelleeArabe"
+          class="form-control"
+          formControlName="libelleeArabe"
+          readonly
+        />
+      </div>
+
+      <!-- Hidden Param ID -->
+      <input
+        type="hidden"
+        formControlName="Paramtres_declaration_idParamtres_declaration"
+      />
+
+      <!-- Debit / Credit -->
+      <div class="form-group">
+        <label for="debit_credit">Débit ou Crédit</label>
+        <select
+          id="debit_credit"
+          class="form-control"
+          formControlName="debit_credit"
+        >
+          <option *ngFor="let option of debitCreditOptions" [value]="option">
+            {{ option }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Rang -->
+      <div class="form-group">
+        <label for="rang">Rang</label>
+        <input
+          type="number"
+          id="rang"
+          class="form-control"
+          formControlName="rang"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Ajouter</button>
+    </form>
+  </div>
+</div>

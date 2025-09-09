@@ -1,0 +1,80 @@
+<div class="info-container">
+  <app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+  <div class="page-header">
+    <h4 class="page-title">Détails du Comptable</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item"><a routerLink="/admin/comptableslist">Comptables</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item"><a>Détails</a></li>
+    </ul>
+  </div>
+
+  <div class="info-card">
+    <!-- Card Header -->
+    <div class="card-header-custom">
+      Informations du Comptable
+    </div>
+
+    <div class="table-responsive">
+      <table class="info-table table table-borderless">
+        <tbody>
+          <tr>
+            <th class="th-with-icon">
+              <img src="userassets/images/commercial.png" alt="Registry Icon" class="table-icon" />
+              Nom Commercial
+            </th>
+            <td>{{ comptable?.nom_commerciale }}</td>
+          </tr>
+          <tr>
+            <th class="th-with-icon">
+              <img src="userassets/images/profile-user.png" alt="Registry Icon" class="table-icon" />
+              Nom
+            </th>
+            <td>{{ comptable?.Nomprenom }}</td>
+          </tr>
+          <tr>
+            <th class="th-with-icon">
+              <img src="userassets/images/note-board.png" alt="Registry Icon" class="table-icon" />
+              Registre Commercial
+            </th>
+            <td>{{ comptable?.registre_de_commerce }}</td>
+          </tr>
+          <tr>
+            <th class="th-with-icon">
+              <img src="userassets/images/barcode.png" alt="Registry Icon" class="table-icon" />Code TVA
+            </th>
+            <td>{{ comptable?.code_tva }}</td>
+          </tr>
+          <tr>
+            <th class="th-with-icon">
+              <img src="userassets/images/telephone-call.png" alt="Registry Icon" class="table-icon" />Téléphone
+            </th>
+            <td>{{ comptable?.phone }}</td>
+          </tr>
+          <tr>
+            <th class="th-with-icon">
+              <img src="userassets/images/email.png" alt="Registry Icon" class="table-icon" />Email
+            </th>
+            <td>{{ comptable?.email }}</td>
+          </tr>
+          <tr>
+            <th>Etat</th>
+            <td>
+              <span *ngIf="etat_comptable==='active'" class="badge badge-success fs-5 px-3 py-2">{{etat_comptable}}</span>
+              <span *ngIf="etat_comptable==='inactive'" class="badge badge-danger fs-5 px-3 py-2">{{etat_comptable}}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="action-buttons">
+      <button *ngIf="etat_comptable==='inactive'" class="btn-activate" (click)="changeEtat('active')">Activer Compte</button>
+      <button *ngIf="etat_comptable==='active'" class="btn-deactivate" (click)="changeEtat('inactive')">Désactiver Compte</button>
+    </div>
+  </div>
+
+  <!-- <button class="back-btn" (click)="goBack()">Retour</button> -->
+</div>

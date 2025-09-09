@@ -1,0 +1,93 @@
+<!-- Banner -->
+<div class="banner header-text"></div>
+<app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+<div class="container my-5" *ngIf="isAuthenticated; else notLoggedIn">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Chargement des informations du client...</p>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="errorMessage" class="alert alert-danger text-center">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Client Details Card -->
+      <div class="info-card">
+        <!-- Card Header -->
+        <div class="card-header-custom">
+          Informations du Client :  {{ client?.Nomprenom }}
+        </div>
+      
+        <div class="table-responsive">
+          <table class="info-table table table-borderless">
+            <tbody>
+              <tr>
+                <th class="th-with-icon">
+                  <img src="userassets/images/profile-user.png" alt="User Icon" class="table-icon" />
+                  Nom et Prénom
+                </th>
+                <td>{{ client?.Nomprenom }}</td>
+              </tr>
+              <tr>
+                <th class="th-with-icon">
+                  <img src="userassets/images/commercial.png" alt="Commercial Icon" class="table-icon" />
+                  Nom Commercial
+                </th>
+                <td>{{ client?.nom_commerciale }}</td>
+              </tr>
+              <tr>
+                <th class="th-with-icon">
+                  <img src="userassets/images/email.png" alt="Email Icon" class="table-icon" />
+                  Email
+                </th>
+                <td>{{ client?.email }}</td>
+              </tr>
+              <tr>
+                <th class="th-with-icon">
+                  <img src="userassets/images/address-location-map-black-icon-symbol-download-png-701751694974706zcvtdkajtm.png" alt="Address Icon" class="table-icon" />
+                  Adresse
+                </th>
+                <td>{{ client?.adresse }}</td>
+              </tr>
+              <tr>
+                <th class="th-with-icon">
+                  <img src="userassets/images/telephone-call.png" alt="Phone Icon" class="table-icon" />
+                  Téléphone
+                </th>
+                <td>{{ client?.phone }}</td>
+              </tr>
+              <tr>
+                <th class="th-with-icon">
+                  <img src="userassets/images/barcode.png" alt="TVA Icon" class="table-icon" />
+                  Code TVA
+                </th>
+                <td>{{ client?.code_tva }}</td>
+              </tr>
+              <tr>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      <div class="action-buttons">
+      <button  class="btn-deactivate" (click)="DeleteClient(client.idClients)">Supprimer Compte client</button>
+        </div>
+        
+      </div>
+      
+
+    </div>
+  </div>
+</div>
+
+<!-- Not Logged In -->
+<ng-template #notLoggedIn>
+  <div class="container my-5 text-center">
+    <p>Veuillez vous connecter pour consulter vos clients.</p>
+    <a routerLink="/login" class="btn btn-primary">Se connecter</a>
+  </div>
+</ng-template>

@@ -1,0 +1,36 @@
+/* Center table headers and cells */
+.table-centered th,
+.table-centered td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Modal styles */
+.modal-lg {
+  max-width: 700px; /* increase modal width */
+}
+
+/* Buttons spacing */
+.btn + .btn {
+  margin-left: 5px;
+}
+
+/* Optional: better spacing inside table */
+.table td {
+  padding: 12px 10px;
+}
+
+/* Modal form labels bold */
+.modal .form-label {
+  font-weight: 600;
+}
+
+/* Modal textarea height adjustment */
+.modal textarea.form-control {
+  min-height: 100px;
+}
+/* Ensure equal width buttons if needed */
+.d-flex .btn {
+    flex: 1; /* buttons expand equally */
+  }
+  

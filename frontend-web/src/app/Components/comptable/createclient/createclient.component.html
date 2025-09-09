@@ -1,0 +1,57 @@
+<!-- Preloader -->
+<div id="preloader">
+    <div class="jumper">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+  
+  <div class="login-container"> <!-- Reusing login container style for gradient and centering -->
+    <div class="logo-container">
+      <a href="/comptablehome">
+        <img src="userassets/images/Accounting_log-removebg-preview.png" alt="Custom Logo" width="100" height="100">
+      </a>
+    </div>
+  
+    <div class="login-form"> <!-- Reusing login-form card style -->
+      <div class="section-heading text-center mb-4">
+        <h2>Ajouter Nouveau Client</h2>
+      </div>
+  
+      <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+        <div class="input-container">
+          <img src="userassets/images/profile-user.png" alt="Name Icon" class="input-icon"/>
+          <input type="text" placeholder="Nom et Prenom" formControlName="Nomprenom" required class="email-input"/>
+        </div>
+  
+        <div class="input-container">
+          <img src="userassets/images/barcode.png" alt="Commercial Name Icon" class="input-icon"/>
+          <input type="text" placeholder="Nom Commercial" formControlName="nom_commerciale" required class="email-input"/>
+        </div>
+  
+        <div class="input-container">
+          <img src="userassets/images/address-location-map-black-icon-symbol-download-png-701751694974706zcvtdkajtm.png" alt="Address Icon" class="input-icon"/>
+          <input type="text" placeholder="Adresse" formControlName="adresse" required class="email-input"/>
+        </div>
+  
+        <div class="input-container">
+          <img src="userassets/images/telephone-call.png" alt="Phone Icon" class="input-icon"/>
+          <input type="text" placeholder="Numero de telephone" formControlName="phone" required class="email-input"/>
+        </div>
+  
+        <div class="input-container">
+          <img src="userassets/images/email.png" alt="Email Icon" class="input-icon"/>
+          <input type="email" placeholder="Email" formControlName="email" required class="email-input"/>
+        </div>
+  
+        <div class="submit-container text-center">
+          <button type="submit" [disabled]="clientForm.invalid || isLoading" class="submit-btn">
+            {{ isLoading ? 'Saving...' : 'Ajouter Client' }}
+          </button>
+        </div>
+  
+        <p class="text-success mt-3 text-center" *ngIf="successMessage">{{ successMessage }}</p>
+        <p class="text-danger mt-3 text-center" *ngIf="errorMessage">{{ errorMessage }}</p>
+      </form>
+    </div>
+  </div>
+  

@@ -1,0 +1,56 @@
+<div class="list-container">
+    <app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+    <div class="page-header">
+        <h4 class="page-title">Prametres des Declarations</h4>
+        <ul class="breadcrumbs">
+          <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+          <li class="separator"><i class="icon-arrow-right"></i></li>
+          <li class="nav-item"><a routerLink="/admin/defaultdeclarationsettings">Parametres par defaut</a></li>
+          <li class="separator"><i class="icon-arrow-right"></i></li>
+          <li class="nav-item"><a routerLink="/admin/defaultdeclarationsettings">Parametres declarations</a></li>
+        </ul>
+      </div>
+    <div class="list-card">
+      <div class="section-heading">
+        <h2>Liste des Parametres des declarations</h2>
+      </div>
+  
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Patientez ...</p>
+      </div>
+  
+      <div class="table-responsive" *ngIf="!isLoading">
+        <table class="table table-striped" *ngIf="declarationsettings.length > 0">
+          <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type de declaration</th>
+                <th>Comptable Associé</th>
+                <th>Type de declaration arabe</th>
+                <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let declarationsetting of declarationsettings">
+              <td>{{ declarationsetting.idParamtres_declaration	 }}</td>
+              <td>{{ declarationsetting.typedeclaration }}</td>
+              <td>{{ declarationsetting.Comptables_idComptable || 'Par Defaut' }}</td>
+              <td>{{ declarationsetting.typedeclarationArabe }}</td>
+              <td>
+                <a [routerLink]="['/admin/associateddeclarationlines', declarationsetting.idParamtres_declaration]" class="btn btn-info">
+                  Voir les lignes de declarations accocies
+                </a>
+                <br>
+                <button class="btn btn-custom" (click)="RemoveDeclarationsetting(declarationsetting.idParamtres_declaration)">Supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <p *ngIf="declarationsettings.length === 0 && !errorMessage">Aucune parametre par defaut trouvée.</p>
+        <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
+      </div>
+      <button class="btn btn-dark-golden" (click)="AddDeclaration()">Ajouter parametres de declarations</button>
+    </div>
+  </div>
+  

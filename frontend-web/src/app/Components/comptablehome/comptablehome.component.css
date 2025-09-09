@@ -1,0 +1,47 @@
+.create-new-button {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 20px;
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.create-new-button:hover {
+    transform: scale(1.1);
+}
+
+  /* Dark golden button */
+  .btn-dark-golden {
+    background-color: #b8860b; /* dark goldenrod */
+    color: white;
+    border: none;
+    padding: 0.4rem 0.6rem;
+  }
+  
+  /* Hover / focus styles */
+  .btn-dark-golden:hover,
+  .btn-dark-golden:focus {
+    background-color: #8b6508;
+    color: white;
+    box-shadow: 0 0 8px rgba(184, 134, 11, 0.7);
+  }
+  
+  /* Hamburger icon */
+  .hamburger-icon {
+    display: inline-block;
+    width: 20px;
+    height: 14px;
+    position: relative;
+  }
+  
+  .hamburger-icon span {
+    display: block;
+    height: 2px;
+    background-color: white;
+    margin: 4px 0;
+    border-radius: 1px;
+  }
+  
+  

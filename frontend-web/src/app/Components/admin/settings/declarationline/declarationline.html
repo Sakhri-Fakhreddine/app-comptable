@@ -1,0 +1,58 @@
+<div class="list-container">
+  <app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+    <div class="page-header">
+        <h4 class="page-title">Prametres des Lignes de Declaration</h4>
+        <ul class="breadcrumbs">
+          <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+          <li class="separator"><i class="icon-arrow-right"></i></li>
+          <li class="nav-item"><a routerLink="/admin/defaultlinesettings">Parametres par defaut</a></li>
+          <li class="separator"><i class="icon-arrow-right"></i></li>
+          <li class="nav-item"><a routerLink="/admin/defaultlinesettings">Parametres des lignes de declaration</a></li>
+        </ul>
+      </div>
+    <div class="list-card">
+      <div class="section-heading">
+        <h2>Liste des Parametres des lignes de declaration</h2>
+      </div>
+  
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Patientez ...</p>
+      </div>
+  
+      <div class="table-responsive" *ngIf="!isLoading">
+        <table class="table table-striped" *ngIf="declarationlinesettings.length > 0">
+          <thead>
+            <tr>
+                <th>ID</th>
+                <th>Libellée</th>
+                <th>Compte Comptable Associé</th>
+                <th>Type ligne declaration</th>
+                <th>Declaration Associé</th>
+                <th>Rang</th>
+                <th>Libellée Arabe</th>
+                <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let declarationlinesetting of declarationlinesettings">
+              <td>{{ declarationlinesetting.idlignes_parametres_decalarations}}</td>
+              <td>{{ declarationlinesetting.libellee }}</td>
+              <td>{{ declarationlinesetting.compte_comptable || 'Par Defaut' }}</td>
+              <td>{{ declarationlinesetting.debit_credit }}</td>
+              <td>{{ declarationlinesetting.Paramtres_declaration_idParamtres_declaration }}</td>
+              <td>{{ declarationlinesetting.rang }}</td>
+              <td>{{ declarationlinesetting.libelleeArabe }}</td>
+              <td>
+                <button class="btn-danger" (click)="RemoveDeclarationLineSetting(declarationlinesetting.idlignes_parametres_decalarations)">Supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <p *ngIf="declarationlinesettings.length === 0 && !errorMessage" align="center">Aucune parametre par defaut trouvée.</p>
+        <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
+      </div>
+      <button class="btn btn-dark-golden" (click)="AddDeclarationLine()">Ajouter parametres de lignes de declaration</button>
+    </div>
+  </div>
+  

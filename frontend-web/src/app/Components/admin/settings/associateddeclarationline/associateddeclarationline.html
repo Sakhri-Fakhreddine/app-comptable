@@ -1,0 +1,73 @@
+<div class="list-container">
+  <app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+
+  <!-- Page Header / Breadcrumbs -->
+  <div class="page-header">
+    <h4 class="page-title">Paramètres des Déclarations</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item"><a routerLink="/admin/defaultdeclarationsettings">Paramètres par défaut</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item"><a routerLink="/admin/defaultdeclarationsettings">Paramètres déclarations</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item">Lignes de déclaration: {{ parametre_declaration?.typedeclaration }}</li>
+    </ul>
+  </div>
+
+  <!-- Card Container -->
+  <div class="declaration-lines-card shadow-sm">
+    <div class="card-header">
+      <h5>Lignes associées à {{ parametre_declaration?.typedeclaration }} <small>({{ parametre_declaration?.typedeclarationArabe }})</small></h5>
+    </div>
+
+    <div class="card-body">
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Patientez ...</p>
+      </div>
+
+      <div *ngIf="!isLoading">
+        <div *ngIf="declarationlinesettings.length > 0" class="table-responsive">
+          <table class="table table-striped table-bordered align-middle">
+            <thead class="table-header-custom">
+              <tr>
+                <th>ID</th>
+                <th>Libellée</th>
+                <th>Compte Comptable</th>
+                <th>Type ligne</th>
+                <th>Declaration Associée</th>
+                <th>Rang</th>
+                <th>Libellée Arabe</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let line of declarationlinesettings">
+                <td>{{ line.idlignes_parametres_decalarations }}</td>
+                <td>{{ line.libellee }}</td>
+                <td>{{ line.compte_comptable || 'par défaut' }}</td>
+                <td>{{ line.debit_credit }}</td>
+                <td>{{ line.Paramtres_declaration_idParamtres_declaration }}</td>
+                <td>{{ line.rang }}</td>
+                <td>{{ line.libelleeArabe }}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm" (click)="RemoveDeclarationLineSetting(line.idlignes_parametres_decalarations)">Supprimer</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p *ngIf="declarationlinesettings.length === 0 && !errorMessage" class="text-center text-muted">
+          Aucune ligne associée à {{ parametre_declaration?.typedeclaration }} trouvée.
+        </p>
+        <p *ngIf="errorMessage" class="text-danger text-center">{{ errorMessage }}</p>
+      </div>
+
+      <!-- Add Line Button -->
+      <div class="text-center mt-3">
+        <button class="btn btn-dark-golden" (click)="AddDeclarationLine()">Ajouter Ligne de Déclaration</button>
+      </div>
+    </div>
+  </div>
+</div>

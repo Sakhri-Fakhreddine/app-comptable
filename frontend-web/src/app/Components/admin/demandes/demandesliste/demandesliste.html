@@ -1,0 +1,57 @@
+<div class="list-container">
+    <app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+    <div class="page-header">
+        <h4 class="page-title">Demandes</h4>
+        <ul class="breadcrumbs">
+          <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+          <li class="separator"><i class="icon-arrow-right"></i></li>
+          <li class="nav-item"><a routerLink="/admin/demandeslist">Demandes</a></li>
+        </ul>
+      </div>
+    <div class="list-card">
+      <div class="section-heading">
+        <h2>Liste des Demandes</h2>
+      </div>
+  
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Patientez ...</p>
+      </div>
+  
+      <div class="table-responsive" *ngIf="!isLoading">
+        <table class="table table-striped" *ngIf="demandes.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Comptable assoccie</th>
+              <th>Type d'abonnement</th>
+              <th>Etat</th>
+              <th>Commentaires</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let demande of demandes">
+              <td>{{ demande.idDemande }}</td>
+              <td>{{ demande.detailcomptables.Nomprenom}}</td>
+              <td>{{ demande.typeabonnement }}</td>
+              <td>
+                <span *ngIf="demande.etat_demande === 'acceptée'" class="badge badge-success fs-5 px-3 py-2">{{ demande.etat_demande }}</span>
+                <span *ngIf="demande.etat_demande === 'refusée'" class="badge badge-danger fs-5 px-3 py-2">{{ demande.etat_demande }}</span>
+                <span *ngIf="demande.etat_demande === 'en cours de traitement'" class="badge badge-warning fs-5 px-3 py-2">{{ demande.etat_demande }}</span>
+              </td>
+              <td>{{ demande.commentaire || 'Aucun Commentaire a afficher' }}</td>
+              <td>
+                <a [routerLink]="['/admin/demande-info', demande.idDemande]" class="btn btn-info">
+                  Voir les details de la demande
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <p *ngIf="demandes.length === 0 && !errorMessage">Aucune demande trouvée.</p>
+        <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
+      </div>
+    </div>
+  </div>
+  

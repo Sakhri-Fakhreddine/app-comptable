@@ -1,0 +1,103 @@
+
+<header>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <a class="navbar-brand" [routerLink]="getHomeLink()"><h2>Accounting <em>Hall</em></h2></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item" routerLinkActive="active">
+              <a class="nav-link"[routerLink]="getHomeLink()">Accueil</a>
+            </li> 
+            <li class="nav-item">
+              <a class="nav-link" href="contact">Contacter nous</a>
+            </li>
+            
+            <!-- Check if user is authenticated -->
+            <ng-container *ngIf="isAuthenticated; else loggedOut">
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/clientslist']">Mes clients</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/settingslist']">Parametres de Declatration</a>
+              </li>
+              <!-- Dropdown for profile actions  -->
+              <li class="nav-item topbar-user dropdown hidden-caret">
+                <a
+                  class="dropdown-toggle profile-pic dark-gold-dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  href="#"
+                  aria-expanded="false"
+                >
+                  <div class="avatar-sm">
+                    <img
+                      src="adminassets/assets/img/profile.jpg"
+                      alt="profile"
+                      class="avatar-img rounded-circle"
+                    />
+                  </div>
+                  <span class="profile-username">
+                    <span class="op-7">Hi,</span>
+                    <span class="fw-bold">{{ userName }}</span>
+                  </span>
+                </a>
+              
+                <ul
+                  class="dropdown-menu dropdown-user animated fadeInDown dark-gold-dropdown-menu dropdown-menu-end"
+                >
+                  <div class="dropdown-user-scroll scrollbar-outer p-2">
+                    <!-- User Box -->
+                    <li>
+                      <div class="user-box text-center p-3">
+                        <div class="avatar-lg mb-2">
+                          <img
+                            src="adminassets/assets/img/profile.jpg"
+                            alt="profile"
+                            class="avatar-img rounded"
+                          />
+                        </div>
+                        <div class="u-text">
+                          <h4>{{ userName }}</h4>
+                          <p class="text-muted">Hello {{ userName }}</p>
+                          <a
+                            [routerLink]="['/edit-profile']"
+                            class="btn btn-xs btn-secondary btn-sm"
+                          >
+                            Voir Profile
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+              
+                    <li>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" [routerLink]="['/edit-profile']">Mon Profile</a>
+                      <a class="dropdown-item" href="#">Messages</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Paramètres du compte</a>
+                      <div class="dropdown-divider"></div>
+                      <button class="dropdown-item" (click)="logout()">Déconnecter</button>
+                    </li>
+                  </div>
+                </ul>
+              </li>
+              
+              
+            </ng-container>
+  
+             <!-- If user is not authenticated  -->
+            <ng-template #loggedOut>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['login']">Connecter</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['register']">Creer un compte</a>
+              </li>
+            </ng-template>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>

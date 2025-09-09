@@ -1,0 +1,12 @@
+<app-header></app-header>
+<router-outlet>  </router-outlet> <!-- Dynamic content will be injected here -->
+
+<li *ngIf="isComptable" class="nav-item">
+    <a class="btn btn-dark-golden create-new-button nav-link" href="/createclient">
+      Ajouter nouveau client
+    </a>
+</li>
+  
+  
+
+<app-footer></app-footer>

@@ -1,0 +1,157 @@
+<!-- Sidebar -->
+<div class="sidebar" data-background-color="dark">
+    <div class="sidebar-logo">
+      <!-- Logo Header -->
+      <div class="logo-header" data-background-color="dark">
+        <a routerLink="/admin" class="logo">
+          <img
+            src="adminassets/assets/img/Accounting_log-removebg-preview.png"
+            alt="navbar brand"
+            class="navbar-brand"
+            height="80"
+          />
+        </a>
+        <div class="nav-toggle">
+          <button class="btn btn-toggle toggle-sidebar">
+            <i class="gg-menu-right"></i>
+          </button>
+          <button class="btn btn-toggle sidenav-toggler">
+            <i class="gg-menu-left"></i>
+          </button>
+        </div>
+        <button class="topbar-toggler more">
+          <i class="gg-more-vertical-alt"></i>
+        </button>
+      </div>
+      <!-- End Logo Header -->
+    </div>
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+      <div class="sidebar-content">
+        <ul class="nav nav-secondary">
+          <li class="nav-item active">
+            <a
+              data-bs-toggle="collapse"
+              href="#dashboard"
+              class="collapsed"
+              aria-expanded="false"
+            >
+              <i class="fas fa-home"></i>
+              <p>Dashboard</p>
+            </a>
+            
+          </li>
+          <li class="nav-section">
+            <span class="sidebar-mini-icon">
+              <i class="fa fa-ellipsis-h"></i>
+            </span>
+            <h4 class="text-section">Lists</h4>
+          </li>
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#base">
+              <i class="fas fa-users"></i>
+              <p>comptables</p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="base">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a routerLink="comptableslist">
+                    <i class="fa-solid fa-users-line"></i>
+                      Tous les Comptables
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="activecomptableslist">
+                    <i class="fa-solid fa-user-check"></i>
+                    Comptables Actifs
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="inactivecomptableslist">
+                    <i class="fas fa-user-xmark"></i>
+                    Comptables Non actifs
+                  </a>
+                </li>            
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#sidebarLayouts">
+              <i class="fas fa-bell"></i>
+              <p>Demandes</p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="sidebarLayouts">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a routerLink="demandeslist">
+                    <i class="fa-solid fa-list"></i>
+                    Toutes les Demandes
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="accepteddemandeslist">
+                    <i class="fa-solid fa-check"></i>
+                    Demandes Acceptees
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="refuseddemandeslist">
+                    <i class="fa-solid fa-xmark"></i>
+                    Demandes Non Acceptees
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="waitingdemandeslist">
+                    <i class="fa-solid fa-spinner"></i>
+                    Demandes Non Traitees
+                  </a>
+                </li>                
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#forms">
+              <i class="fa-solid fa-gears"></i>
+              <p>Parametres par defaut</p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="forms">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a routerLink="defaultdeclarationsettings">
+                    <i class="fa-solid fa-gear"></i>
+                    Parametres des declarations
+                  </a>
+                </li> 
+                <li>
+                  <a routerLink="defaultlinesettings">
+                    <i class="fa-solid fa-gear"></i>
+                    Parametres des lignes de declaration
+                  </a>
+                </li>      
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a data-bs-toggle="collapse" href="#tables">
+              <i class="fa-solid fa-person-military-to-person"></i>
+                <p>Clients</p>
+              <span class="caret"></span>
+            </a>
+            <div class="collapse" id="tables">
+              <ul class="nav nav-collapse">
+                <li>
+                  <a routerLink="clientslist">
+                    <i class="fa-solid fa-person-circle-question"></i>
+                    Client_Comptables
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+</div>
+<!-- End Sidebar -->

@@ -1,0 +1,54 @@
+<div class="list-container">
+    <div class="page-header">
+        <h4 class="page-title">Comptables</h4>
+        <ul class="breadcrumbs">
+          <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+          <li class="separator"><i class="icon-arrow-right"></i></li>
+          <li class="nav-item"><a routerLink="/admin/comptableslist">Comptables</a></li>
+        </ul>
+      </div>
+    <div class="list-card">
+      <div class="section-heading">
+        <h2>Liste des Comptables</h2>
+      </div>
+  
+      <div *ngIf="isLoading" class="text-center my-3">
+        <p>Patientez ...</p>
+      </div>
+  
+      <div class="table-responsive" *ngIf="!isLoading">
+        <table class="table table-striped" *ngIf="comptables.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Etat</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let comptable of comptables">
+              <td>{{ comptable.idComptable }}</td>
+              <td>{{ comptable.Nomprenom }}</td>
+              <td>{{ comptable.email }}</td>
+              <td>
+                <span *ngIf="comptable.etat==='active'" class="badge badge-success fs-5 px-3 py-2">{{comptable.etat}}</span>
+                <span *ngIf="comptable.etat==='inactive'" class="badge badge-danger fs-5 px-3 py-2">{{comptable.etat}}</span>
+                <!-- <span *ngIf="comptable.etat==='non_traite'" class="badge badge-warning fs-5 px-3 py-2">{{comptable.etat}}</span> -->
+              </td>
+              <td>
+                <a [routerLink]="['/admin/comptable-info', comptable.idComptable]" class="btn btn-info">
+                  Voir les informations
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <p *ngIf="comptables.length === 0 && !errorMessage">Aucun comptable trouvé.</p>
+        <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
+      </div>
+    </div>
+  </div>
+  

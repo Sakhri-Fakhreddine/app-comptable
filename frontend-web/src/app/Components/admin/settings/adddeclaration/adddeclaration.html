@@ -1,0 +1,50 @@
+<div class="list-container">
+  <app-alert [message]="alertMessage" [type]="alertType" (closed)="closeAlert()"></app-alert>
+
+  <div class="page-header">
+    <h4 class="page-title">Paramètres des Declarations</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item"><a routerLink="/admin/defaultdeclarationsettings">Parametres par defaut</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item"><a routerLink="/admin/defaultdeclarationsettings">Parametres declarations</a></li>
+      <li class="separator"><i class="icon-arrow-right"></i></li>
+      <li class="nav-item"><a routerLink="/admin/adddeclarationsetting">Ajouter Parametres declarations</a></li>
+    </ul>
+  </div>
+
+  <div class="form-card">
+    <h3>Ajouter un paramètre de déclaration</h3>
+
+    <form [formGroup]="declarationForm" (ngSubmit)="onSubmit()">
+
+      <!-- Type Declaration -->
+      <div class="form-group">
+        <label for="typedeclaration">Type de déclaration</label>
+        <select id="typedeclaration" formControlName="typedeclaration" class="form-control">
+          <option value="">Sélectionnez un type</option>
+          <option value="Paies">Paies</option>
+          <option value="Achats">Achats</option>
+          <option value="Ventes">Ventes</option>
+          <option value="Salaires">Salaires</option>
+          <option value="Autres">Autres</option>
+        </select>
+      </div>
+
+      <!-- Type Declaration Arabe -->
+      <div class="form-group">
+        <label for="typedeclarationArabe">Type de déclaration (Arabe)</label>
+        <input id="typedeclarationArabe" type="text" formControlName="typedeclarationArabe" class="form-control readonly-input" readonly />
+      </div>
+
+      <!-- Comptable -->
+      <div class="form-group">
+        <label for="comptable">Comptable associé (ID)</label>
+        <input id="comptable" type="text" formControlName="Comptables_idComptable" class="form-control readonly-input" placeholder="Par Defaut" readonly />
+      </div>
+
+      <button type="submit" class="btn btn-primary full-width-btn" [disabled]="declarationForm.invalid">Enregistrer</button>
+    </form>
+  </div>
+</div>

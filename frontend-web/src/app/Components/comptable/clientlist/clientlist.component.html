@@ -1,0 +1,68 @@
+<!-- Banner -->
+<div class="banner header-text"></div>
+
+<!-- Clients Card Table -->
+<div class="latest-products" *ngIf="isAuthenticated; else notLoggedIn">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card shadow-sm clients-card">
+          <!-- Card Header -->
+          <div class="card-header">
+            <h5>Mes Clients</h5>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+
+            <!-- Loader -->
+            <div *ngIf="isLoading" class="text-center my-3">
+              <p>Patientez ...</p>
+            </div>
+
+            <!-- Clients Table -->
+            <div *ngIf="!isLoading && clients.length > 0" class="table-responsive">
+              <table class="table table-striped table-hover custom-table align-middle">
+                <thead class="table-header-custom">
+                  <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Adresse</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let client of clients">
+                    <td>{{ client.idClients }}</td>
+                    <td>{{ client.Nomprenom }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ client.adresse || 'Non spécifiée' }}</td>
+                    <td>
+                      <a [routerLink]="['/client-info', client.idClients]" class="btn btn-dark-golden btn-md">
+                        Voir toutes les informations
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- No Clients -->
+            <p *ngIf="!isLoading && clients.length === 0" class="text-center">Aucun client trouvé.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Not Logged In Message -->
+<ng-template #notLoggedIn>
+  <div class="container my-5 text-center">
+    <p>Veuillez vous connecter pour voir vos clients.</p>
+    <a routerLink="/login" class="btn btn-dark-golden">Se connecter</a>
+  </div>
+</ng-template>
