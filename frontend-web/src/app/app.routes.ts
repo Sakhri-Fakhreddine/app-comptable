@@ -29,6 +29,7 @@ import { Adddeclarationline } from './Components/admin/settings/adddeclarationli
 import { Clientinfo } from './Components/comptable/clientinfo/clientinfo';
 import { Settingslist } from './Components/comptable/settingslist/settingslist';
 import { AddsettingsComponent } from './Components/comptable/addsettings/addsettings.component';
+import { Clientinformations } from './Components/admin/clientcomptables/clientinformations/clientinformations';
 
 export const routes: Routes = [
     {
@@ -58,6 +59,7 @@ export const routes: Routes = [
             { path: 'activecomptableslist', component: Activecomptable },
             { path: 'inactivecomptableslist', component: Inactivecomptable },
             { path: 'comptable-info/:id', component: ComptableinfoComponent },
+            { path: 'client-info/:id', component: Clientinformations },
             { path: 'clientslist', component: Clientcomptableslist },
             { path: 'demandeslist', component: Demandesliste },
             { path: 'accepteddemandeslist', component: Accepteddemandesliste },

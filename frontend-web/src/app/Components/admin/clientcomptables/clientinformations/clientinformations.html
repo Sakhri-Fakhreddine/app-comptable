@@ -1,0 +1,86 @@
+<div class="info-container">
+    <div class="page-header">
+      <h4 class="page-title">Détails du Client</h4>
+      <ul class="breadcrumbs">
+        <li class="nav-home"><a routerLink="/admin"><i class="icon-home"></i> Home</a></li>
+        <li class="separator"><i class="icon-arrow-right"></i></li>
+        <li class="nav-item"><a routerLink="/admin/comptableslist">Clients</a></li>
+        <li class="separator"><i class="icon-arrow-right"></i></li>
+        <li class="nav-item"><a>Détails</a></li>
+      </ul>
+    </div>
+  
+    <div class="info-card">
+      <!-- Card Header -->
+      <div class="card-header-custom">
+        Informations du Client
+      </div>
+  
+      <div class="table-responsive">
+        <table class="info-table table table-borderless">
+          <tbody>
+            <tr>
+              <th class="th-with-icon">
+                <img src="userassets/images/commercial.png" alt="Registry Icon" class="table-icon" />
+                Nom Commercial
+              </th>
+              <td>{{ client?.nom_commerciale }}</td>
+            </tr>
+            <tr>
+              <th class="th-with-icon">
+                <img src="userassets/images/profile-user.png" alt="Registry Icon" class="table-icon" />
+                Nom
+              </th>
+              <td>{{ client?.Nomprenom }}</td>
+            </tr>
+            <tr>
+              <th class="th-with-icon">
+                <img src="userassets/images/location.png" alt="Registry Icon" class="table-icon" />
+                Adresse
+              </th>
+              <td>{{ client?.adresse }}</td>
+            </tr>
+            <tr>
+              <th class="th-with-icon">
+                <img src="userassets/images/barcode.png" alt="Registry Icon" class="table-icon" />Code TVA
+              </th>
+              <td>{{ client?.code_tva || ' none' }}</td>
+            </tr>
+            <tr>
+                <th class="th-with-icon">
+                  <img src="userassets/images/link.png" alt="Registry Icon" class="table-icon" />Comptable Associé
+                </th>
+                <td>{{ comptable?.Nomprenom || ' none' }}</td>
+              </tr>
+            <tr>
+              <th class="th-with-icon">
+                <img src="userassets/images/telephone-call.png" alt="Registry Icon" class="table-icon" />Téléphone
+              </th>
+              <td>{{ client?.phone }}</td>
+            </tr>
+            <tr>
+              <th class="th-with-icon">
+                <img src="userassets/images/email.png" alt="Registry Icon" class="table-icon" />Email
+              </th>
+              <td>{{ client?.email }}</td>
+            </tr>
+            <tr>
+              <!-- <th class="th-with-icon">
+                <img src="userassets/images/access-control.png" alt="Registry Icon" class="table-icon" />
+                Etat</th> 
+                 <td>
+                <span *ngIf="etat_comptable==='active'" class="badge badge-success fs-5 px-3 py-2">{{etat_comptable}}</span>
+                <span *ngIf="etat_comptable==='inactive'" class="badge badge-danger fs-5 px-3 py-2">{{etat_comptable}}</span>
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-warning" type="button" (click)="goBack()">
+            <i class="fa-solid fa-circle-arrow-left"></i>
+          Retour
+        </button>
+        </div>
+    
+  

@@ -47,6 +47,21 @@ class AdminController extends Controller
             'data' => $comptable
         ]);
     }
+    public function clientinfo($id): \Illuminate\Http\JsonResponse
+    {
+        $client = Clients_comptables::find($id);
+
+        if (!$client) {
+            return response()->json([
+                'message' => 'client not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $client
+        ]);
+    }
     public function updateEtatComptable($id, Request $request)
     {
         // Validate request

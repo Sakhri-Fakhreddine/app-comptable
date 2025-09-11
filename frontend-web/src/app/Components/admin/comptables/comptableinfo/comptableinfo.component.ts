@@ -3,13 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AdminService } from '../../../../Services/admin.service';
 import { Alert } from '../../../alert/alert';
+import { FormsModule } from '@angular/forms';
+declare var bootstrap: any;
 
 
 
 @Component({
   selector: 'app-comptableinfo',
   standalone: true,
-  imports: [CommonModule, RouterModule, Alert],
+  imports: [CommonModule, RouterModule, Alert,FormsModule],
   templateUrl: './comptableinfo.component.html',
   styleUrls: ['./comptableinfo.component.css']
 })
@@ -22,6 +24,12 @@ export class ComptableinfoComponent implements OnInit {
   comptableId!: number;
   alertMessage: string = '';
   alertType: 'success' | 'error' | 'warning' = 'success';
+  // Email modal
+  demandeEmail = {
+    recipient: '',
+    subject: '',
+    message: ''
+  };
 
   constructor(
     private adminService: AdminService,
@@ -77,6 +85,28 @@ export class ComptableinfoComponent implements OnInit {
     });
   }
   
+  // Email modal submit
+  sendEmail(emailData: any) {
+    if (!this.comptable?.email) return;
+  
+    // Set the recipient automatically
+    emailData.recipient = this.comptable.email;
+  
+    this.adminService.sendEmail(emailData).subscribe({
+      next: (res) => {
+        console.log('Email sent successfully:', res);
+        this.showAlert('Email envoyé avec succès !', 'success');
+        // Close the modal manually
+        const modalElement = document.getElementById('emailModal');
+        const modal = bootstrap.Modal.getInstance(modalElement!);
+        modal?.hide();
+      },
+      error: (err) => {
+        console.error('Failed to send email:', err);
+        this.showAlert('Erreur lors de l’envoi de l’email.', 'error');
+      }
+    });
+  }
 
   showAlert(message: string, type: 'success' | 'error' | 'warning') {
     this.alertMessage = message;

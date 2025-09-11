@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/demandeinfo/{id}', [DemandeController::class, 'demandeinfo']);
     Route::put('/admin/comptable/{id}/etat', [AdminController::class, 'updateEtatComptable']);
     Route::get('/admin/comptableinfo/{id}', [AdminController::class, 'comptableinfo']);
+    Route::get('/admin/clientinfo/{id}', [AdminController::class, 'clientinfo']);
     Route::get('/admin/demandeslist', [AdminController::class, 'demandeslist']);
     Route::get('/admin/clientslist', [AdminController::class, 'clientslist']);
     Route::get('/admin/comptableslist', [AdminController::class, 'comptableslist']);

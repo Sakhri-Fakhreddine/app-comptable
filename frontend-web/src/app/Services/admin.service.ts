@@ -19,6 +19,12 @@ export class AdminService {
         headers: { Authorization: `Bearer ${token}` }
       });
     }
+    getClientinfo(id:number): Observable<any> {
+      const token = localStorage.getItem('token');
+      return this.http.get(`${this.apiUrl}/clientinfo/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
     updateEtatComptable(id: number, newEtat: 'active' | 'inactive') {
       const token = localStorage.getItem('token');
       return this.http.put(

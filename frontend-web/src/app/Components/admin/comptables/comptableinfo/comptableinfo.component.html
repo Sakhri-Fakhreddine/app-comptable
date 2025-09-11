@@ -60,7 +60,9 @@
             <td>{{ comptable?.email }}</td>
           </tr>
           <tr>
-            <th>Etat</th>
+            <th class="th-with-icon">
+              <img src="userassets/images/access-control.png" alt="Registry Icon" class="table-icon" />
+              Etat</th>
             <td>
               <span *ngIf="etat_comptable==='active'" class="badge badge-success fs-5 px-3 py-2">{{etat_comptable}}</span>
               <span *ngIf="etat_comptable==='inactive'" class="badge badge-danger fs-5 px-3 py-2">{{etat_comptable}}</span>
@@ -69,12 +71,64 @@
         </tbody>
       </table>
     </div>
+    <div class="action-buttons">
+    <button class="btn btn-warning" type="button" data-bs-toggle="modal" data-bs-target="#emailModal">
+      <i class="fas fa-envelope me-2"></i>
+      Contacter Comptable
+    </button>
+    </div>
 
     <div class="action-buttons">
-      <button *ngIf="etat_comptable==='inactive'" class="btn-activate" (click)="changeEtat('active')">Activer Compte</button>
-      <button *ngIf="etat_comptable==='active'" class="btn-deactivate" (click)="changeEtat('inactive')">Désactiver Compte</button>
+      <button *ngIf="etat_comptable==='inactive'" class="btn-activate" (click)="changeEtat('active')">
+        <i class="fa-solid fa-user-check"></i>
+        Activer Compte</button>
+      <button *ngIf="etat_comptable==='active'" class="btn-deactivate" (click)="changeEtat('inactive')">
+        <i class="fa-solid fa-ban"></i>
+        Désactiver Compte</button>
     </div>
   </div>
 
   <!-- <button class="back-btn" (click)="goBack()">Retour</button> -->
+</div>
+
+<!-- Email Modal (static, centered, large) -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Envoyer un Email à {{ comptable?.Nomprenom }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form (ngSubmit)="sendEmail(demandeEmail)">
+        <div class="modal-body">
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-2">
+              <i class="fas fa-envelope me-2"></i>Receveur
+            </label>
+            <input type="text" class="form-control" [value]="comptable?.email" disabled>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-2">
+              <i class="fas fa-tag me-2"></i>Objet
+            </label>
+            <input type="text" class="form-control" [(ngModel)]="demandeEmail.subject" name="subject" required placeholder="Entrer l'objet de votre email">
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-2">
+              <i class="fas fa-comment me-2"></i>Message
+            </label>
+            <textarea class="form-control" rows="6" [(ngModel)]="demandeEmail.message" name="message" required placeholder="Ecrire votre message ici..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-paper-plane me-2"></i>Send
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
