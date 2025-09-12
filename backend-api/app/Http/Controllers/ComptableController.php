@@ -142,4 +142,19 @@ public function createclient(Request $request)
     }
 }
 
+public function getComptableById($id)
+    {
+        $comptable = Comptables:: where('idComptable', $id)->first();
+
+        if (!$comptable) {
+            return response()->json(['success' => false, 'message' => 'Comptable not found'], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $comptable
+        ]);
+    }
+
+
+
 }

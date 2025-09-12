@@ -71,7 +71,15 @@ getDeclarationSettingsById(id: number): Observable<any> {
   return this.http.get(`${this.apiUrl}/declarationsettings/${id}`, { headers });
 }
 
-
-
+getComptableById(id: number, data: any): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = { Authorization: `Bearer ${token}` };
+  return this.http.put(`${this.apiUrl}/comptable/${id}`, data, { headers });
+}
+sendEmail(emailData: { recipient: string; subject: string; message: string }): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = { Authorization: `Bearer ${token}` };
+  return this.http.post(`${this.apiUrl}/send-email`, emailData, { headers });
+}
 
 }

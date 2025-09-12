@@ -3,11 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Alert } from '../../alert/alert';
 import { ComptableService } from '../../../Services/comptable.service';
+import { FormsModule } from '@angular/forms';
+import { AdminService } from '../../../Services/admin.service';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-clientinfo',
   standalone: true,
-  imports: [CommonModule, RouterModule, Alert],
+  imports: [CommonModule, RouterModule, Alert,FormsModule],
   templateUrl: './clientinfo.html',
   styleUrl: './clientinfo.css'
 })
@@ -20,6 +23,13 @@ export class Clientinfo implements OnInit {
   accessaccount : boolean = false ;
   alertMessage: string = '';
   alertType: 'success' | 'error' | 'warning' = 'success';
+  comptable : any;
+  // Email modal
+  demandeEmail = {
+    recipient: '',
+    subject: '',
+    message: ''
+  };
 
   constructor(
     private comptaleService: ComptableService,
@@ -52,6 +62,15 @@ export class Clientinfo implements OnInit {
         console.log(this.accessaccount);
         this.isLoading = false;
         this.clientId = this.client.idClients;
+        this.comptaleService.getDeclarationLinesById(this.client.id_comptable).subscribe({
+          next : (res : any) => {
+            this.comptable = res.data || null ;
+            console.log('fetched accountant : ', this.comptable);
+          },
+          error : (err)=>{
+            console.error('error fetching associated comptable',err);
+          }
+        })
       },
       error: (err) => {
         console.error('Error fetching accountant info:', err);
@@ -79,6 +98,29 @@ export class Clientinfo implements OnInit {
         }
       });
     }
+  }
+
+  // Email modal submit
+  sendEmail(emailData: any) {
+    if (!this.client?.email) return;
+  
+    // Set the recipient automatically
+    emailData.recipient = this.client.email;
+  
+    this.comptaleService.sendEmail(emailData).subscribe({
+      next: (res) => {
+        console.log('Email sent successfully:', res);
+        this.showAlert('Email envoyé avec succès !', 'success');
+        // Close the modal manually
+        const modalElement = document.getElementById('emailModal');
+        const modal = bootstrap.Modal.getInstance(modalElement!);
+        modal?.hide();
+      },
+      error: (err) => {
+        console.error('Failed to send email:', err);
+        this.showAlert('Erreur lors de l’envoi de l’email.', 'error');
+      }
+    });
   }
 
 

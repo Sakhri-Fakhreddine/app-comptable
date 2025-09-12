@@ -73,9 +73,17 @@
             </tbody>
           </table>
         </div>
+        <div class="action-buttons">
+          <button class="btn btn-warning" type="button" data-bs-toggle="modal" data-bs-target="#emailModal">
+            <i class="fas fa-envelope me-2"></i>
+            Contacter Client
+          </button>
+          </div>
       <div class="action-buttons">
-      <button  class="btn-deactivate" (click)="DeleteClient(client.idClients)">Supprimer Compte client</button>
-        </div>
+        <button  class="btn-deactivate" (click)="DeleteClient(client.idClients)">
+        <i class="fa-solid fa-trash"></i>
+        Supprimer Compte client</button>
+      </div>
         
       </div>
       
@@ -91,3 +99,45 @@
     <a routerLink="/login" class="btn btn-primary">Se connecter</a>
   </div>
 </ng-template>
+
+<!-- Email Modal (static, centered, large) -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Envoyer un Email à {{ client?.Nomprenom }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form (ngSubmit)="sendEmail(demandeEmail)">
+        <div class="modal-body">
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-2">
+              <i class="fas fa-envelope me-2"></i>Receveur
+            </label>
+            <input type="text" class="form-control" [value]="client?.email" disabled>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-2">
+              <i class="fas fa-tag me-2"></i>Objet
+            </label>
+            <input type="text" class="form-control" [(ngModel)]="demandeEmail.subject" name="subject" required placeholder="Entrer l'objet de votre email">
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-2">
+              <i class="fas fa-comment me-2"></i>Message
+            </label>
+            <textarea class="form-control" rows="6" [(ngModel)]="demandeEmail.message" name="message" required placeholder="Ecrire votre message ici..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-paper-plane me-2"></i>Envoyer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {ret
 
 //admin routes 
 Route::post('/admin/send-email', [MailingController::class, 'sendEmail']);
-Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
     Route::delete('admin/declarationlinesettings/{id}', [LignedeclarationController::class, 'deleteDeclarationLineSetting']);
     Route::delete('admin/declarationsettings/{id}', [DeclarationController::class, 'deleteDeclarationSetting']);
     Route::post('admin/declarationlinesettings', [LignedeclarationController::class, 'storesettings']);
@@ -61,6 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/declarationsettings/{id}', [DeclarationController::class, 'getDeclarationSettingById']);
     Route::put('/declarationsettings/{id}', [DeclarationController::class, 'updateDeclarationSettings']);
     Route::post('/declarationsettings', [DeclarationController::class, 'createDeclarationSettings']);
+    Route::get('/comptable/{id}', [ComptableController::class, 'getComptableById']);
+    Route::post('/send-email', [MailingController::class, 'sendEmailFromAccountant']);
 
  });
 
