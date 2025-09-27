@@ -19,6 +19,7 @@ use App\Http\Controllers\ComptableController;
 //login/register/ reset password links 
 Route::post('/register', [DemandeController::class, 'register']); // Create a demande
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/clientlogin', [AuthController::class, 'clientlogin']);
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -66,6 +67,24 @@ Route::post('/admin/send-email', [MailingController::class, 'sendEmail']);
 
  });
 
+
+
+
+ //client routes 
+ Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/client-profile', [ClientController::class, 'show']);
+    Route::put('/client-profile/update', [ClientController::class, 'update']);
+    Route::post('/client-change-password', [ClientController::class, 'changePassword']);
+    Route::post('/reset-password', [ClientController::class, 'resetPassword']);
+    Route::get('/declaration/settings/{type}', [DeclarationController::class, 'getSettings']);
+    Route::post('/declarations', [DeclarationController::class, 'storeclientdeclaration']);
+    Route::get('/clients/{id}/declarations', [DeclarationController::class, 'getClientDeclarations']);
+    Route::get('/declaration/types', [DeclarationController::class, 'getTypes']);
+
+
+
+
+});
 
 
 

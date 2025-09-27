@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Clients_comptables;
 use App\Models\Comptables;
+use App\Models\declarations;
+use App\Models\ligne_lignedecalarations;
+use App\Models\lignedeclarations;
 use App\Models\lignes_parametres_decalarations;
 use App\Models\Parametres_declarations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 
 class DeclarationController extends Controller
@@ -60,11 +65,7 @@ class DeclarationController extends Controller
                     }
                 }
             }
-        } else {
-            // Other users: return only defaults
-            $parametres_declarations = Parametres_declarations::whereNull('Comptables_idComptable')->get();
-        }
-    
+        } 
         return response()->json($parametres_declarations->values(), 200);
     }
     
@@ -313,6 +314,120 @@ class DeclarationController extends Controller
         ]);
     }
     
+
+    public function getSettings($type)
+    {
+        $user = Auth::user();
+    
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+        $client = Clients_comptables::where('email', $user->email)->first();
+        Log::info(message: "Authenticated client   :  $client");
+
+        Log::info(message: "Getting settings for type  :  $type");
+        // Try to get comptable-specific setting first
+            $parametre = Parametres_declarations::where('typedeclaration', $type)
+            ->where('Comptables_idComptable', $client->id_comptable)
+            ->first();
+
+            // If no comptable-specific setting, fallback to default
+            if (!$parametre) {
+            $parametre = Parametres_declarations::where('typedeclaration', $type)
+                ->whereNull('Comptables_idComptable')
+                ->first();
+            }
+
+            if (!$parametre) {
+            return response()->json(['message' => 'Declaration type not found'], 404);
+            }
+
+            // Get associated line parameters
+            $lines = Lignes_parametres_decalarations::where('Paramtres_declaration_idParamtres_declaration', $parametre->idParamtres_declaration)
+            ->orderBy('rang', 'asc')
+            ->get();
+
+            Log::info(message: "returned lines  :  $lines");
+
+            return response()->json([
+            'id' => $parametre->idParamtres_declaration,
+            'typedeclaration' => $parametre->typedeclaration,
+            'lines' => $lines
+            ]);
+
+    }
+
+    public function storeclientdeclaration(Request $request)
+    {
+        $validated = $request->validate([
+            'client_id' => 'required|exists:Clients_comptables,idClients',
+            'typedeclaration' => 'required',
+            'anneemois' => 'required|string|max:7',
+            'lines' => 'required|array',
+            'lines.*.param_id' => 'required|exists:lignes_parametres_decalarations,idlignes_parametres_decalarations',
+            'lines.*.valeur' => 'required'
+        ]);
+    
+        try {
+            DB::beginTransaction(); // Start transaction
+    
+            // 1. Create declaration
+            $declaration = declarations::create([
+                'datedeclaration' => now(),
+                'anneemois' => $validated['anneemois'],
+                'Clients_comptable_idClients' => $validated['client_id'],
+                'etat_declaration' => 'en cours',
+                'typedeclaration' => $validated['typedeclaration']
+            ]);
+    
+            // 2. Create ligne declaration and ligne_lignedecalarations
+            foreach ($validated['lines'] as $line) {
+                $ligneDeclaration = lignedeclarations::create([
+                    'declarations_iddeclarations' => $declaration->iddeclarations,
+                    'libelle' => 'ligne'
+                ]);
+    
+                ligne_lignedecalarations::create([
+                    'valeurs' => $line['valeur'],
+                    'lignedeclarations_idlignedeclarations' => $ligneDeclaration->idlignedeclarations,
+                    'lignes_parametres_decalarations_idlignes_parametres_decalarations' => $line['param_id']
+                ]);
+            }
+    
+            DB::commit(); // Commit transaction
+            return response()->json(['message' => 'Declaration created successfully'], 201);
+    
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback transaction if any error occurs
+            \Log::error('Error creating declaration: '.$e->getMessage());
+            return response()->json(['message' => 'Failed to create declaration', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
+
+    // Get all available declaration types
+    public function getTypes()
+    {
+        // Select both French and Arabic labels
+        $types = Parametres_declarations::select('typedeclaration', 'typedeclarationArabe')->distinct()->get();
+
+        if ($types->isEmpty()) {
+            return response()->json(['message' => 'No declaration types found'], 404);
+        }
+
+        Log::info("Returned types : " . $types->toJson());
+
+        return response()->json([
+            'types' => $types
+        ]);
+    }
+
+
+
+
 
 
 

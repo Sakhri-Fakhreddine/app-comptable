@@ -11,65 +11,11 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Comptables;
 use App\Http\Controllers\Controller;
+use App\Models\Clients_comptables;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-//    // ✅ Register as 'comptable'
-//    public function register(Request $request)
-//    {
-//     $validated = $request->validate([
-//         'name' => 'required|string|max:255',
-//         'email' => 'required|email|unique:users,email|unique:comptables,email',
-//         'password' => 'required|string|confirmed|min:6',
-
-//         // Comptable-specific fields
-//         'nom_commercial' => 'required|string|max:255',
-//         'registre_de_commerce' => 'required|string|unique:comptables,registre_de_commerce',
-//         'code_tva' => 'required|string|unique:comptables,code_tva',
-//         'phone' => 'required|string|max:20',
-//     ]);
-
-//     DB::beginTransaction();
-
-//     try {
-//         // Create user
-//         $user = User::create([
-//             'name' => $validated['name'],
-//             'email' => $validated['email'],
-//             'password' => Hash::make($validated['password']),
-//             'usertype' => 'comptable',
-//         ]);
-
-//         // Create comptable and link to user
-//         $comptable = Comptables::create([
-//             'user_id' => $user->id,
-//             'nom_commerciale' => $validated['nom_commercial'],
-//             'Nomprenom' => $validated['name'],
-//             'registre_de_commerce' => $validated['registre_de_commerce'],
-//             'code_tva' => $validated['code_tva'],
-//             'phone' => $validated['phone'],
-//             'email' => $validated['email'],
-//             'etat' => 'inactive',
-//         ]);
-
-//         DB::commit();
-
-//         // Generate token
-//         $token = $user->createToken('API Token')->plainTextToken;
-
-//         return response()->json([
-//             'message' => 'Comptable registered successfully.',
-//             'user' => $user,
-//             'comptable' => $comptable,
-//             'token' => $token,
-//         ], 201);
-//     } catch (\Exception $e) {
-//         DB::rollBack();
-//         return response()->json(['error' => 'Registration failed.', 'details' => $e->getMessage()], 500);
-//     }
-//    }
-
 
 public function login(Request $request)
 {
@@ -115,6 +61,61 @@ public function login(Request $request)
 
     return response()->json(['message' => 'Invalid credentials.'], 401);
 }
+
+public function clientlogin(Request $request)
+{
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $user = Auth::user();
+
+        // Only for clients
+        $clientData = null;
+        if ($user->usertype === 'client') {
+            $client = Clients_comptables::where('email', $user->email)->first();
+
+            if (!$client) {
+                Auth::logout();
+                return response()->json(['message' => 'Aucun compte avec cette adresse mail n’est trouvé'], 404);
+            }
+
+            $comptableassocie = Comptables::where('idComptable', $client->id_comptable)->first();
+
+            if ($comptableassocie->etat !== 'active') {
+                Auth::logout();
+                return response()->json([
+                    'message' => "Le compte de votre comptable associé est '{$comptableassocie->etat}', merci de le contacter pour plus d'informations"
+                ], 403);
+            }
+
+            $clientData = [
+                'id' => $client->idClients,
+                'nom' => $client->Nomprenom,
+                'email' => $client->email,
+            ];
+        }
+
+        // Create token
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        $responseData = [
+            'message' => 'Login successful',
+            'token' => $token,
+            'user' => [
+                'email' => $user->email,
+                'usertype' => $user->usertype,
+            ],
+            'client' => $clientData, // <-- include client info if client
+        ];
+
+        Log::info('Login Response:', $responseData);
+
+        return response()->json($responseData, 200);
+    }
+
+    return response()->json(['message' => 'Invalid credentials.'], 401);
+}
+
 
 
 
