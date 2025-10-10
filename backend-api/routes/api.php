@@ -80,6 +80,7 @@ Route::post('/admin/send-email', [MailingController::class, 'sendEmail']);
     Route::post('/declarations', [DeclarationController::class, 'storeclientdeclaration']);
     Route::get('/clients/{id}/declarations', [DeclarationController::class, 'getClientDeclarations']);
     Route::get('/declaration/types', [DeclarationController::class, 'getTypes']);
+    Route::get('/client-declarations', [DeclarationController::class, 'getClientDeclarations']);
 
 
 

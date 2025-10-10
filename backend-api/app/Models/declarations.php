@@ -13,7 +13,8 @@ class declarations extends Model
         'anneemois', 
         'Clients_comptable_idClients', 
         'etat_declaration', 
-        'typedeclaration'
+        'typedeclaration',
+        'document'
     ];
     public $timestamps = true;
 

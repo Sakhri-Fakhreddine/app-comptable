@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 
 class DeclarationController extends Controller
@@ -362,50 +363,86 @@ class DeclarationController extends Controller
 
     public function storeclientdeclaration(Request $request)
     {
+        Log::info("🔹 Attempting to submit a declaration...");
+        Log::info("📩 Incoming request data: " . json_encode($request->all()));
+
+        // Decode lines if sent as JSON string
+        if (is_string($request->lines)) {
+            $request->merge(['lines' => json_decode($request->lines, true)]);
+            Log::info("🔄 Decoded 'lines' from JSON: " . json_encode($request->lines));
+        }
+
         $validated = $request->validate([
             'client_id' => 'required|exists:Clients_comptables,idClients',
             'typedeclaration' => 'required',
-            'anneemois' => 'required|string|max:7',
+            'anneemois' => 'required|string|max:7', // format YYYY-MM
             'lines' => 'required|array',
             'lines.*.param_id' => 'required|exists:lignes_parametres_decalarations,idlignes_parametres_decalarations',
-            'lines.*.valeur' => 'required'
+            'lines.*.valeur' => 'required',
+            'lines.*.libelle' => 'required|string',
+            'document' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120'
         ]);
-    
+
+        Log::info("✅ Validation passed. Validated data: " . json_encode($validated));
+
         try {
-            DB::beginTransaction(); // Start transaction
-    
-            // 1. Create declaration
+            DB::beginTransaction();
+
+            // Handle file upload
+            $documentPath = null;
+            if ($request->hasFile('document')) {
+                $documentPath = $request->file('document')->store('declarations_docs', 'public');
+                Log::info("📄 Document uploaded to: " . $documentPath);
+            }
+
+            // Create declaration
             $declaration = declarations::create([
                 'datedeclaration' => now(),
                 'anneemois' => $validated['anneemois'],
                 'Clients_comptable_idClients' => $validated['client_id'],
                 'etat_declaration' => 'en cours',
-                'typedeclaration' => $validated['typedeclaration']
+                'typedeclaration' => $validated['typedeclaration'],
+                'document' => $documentPath
             ]);
-    
-            // 2. Create ligne declaration and ligne_lignedecalarations
+
+            Log::info("📝 Declaration created with ID: " . $declaration->iddeclarations);
+
+            // Create ligne declaration
             foreach ($validated['lines'] as $line) {
+                Log::info("➖ Processing line: " . json_encode($line));
+
                 $ligneDeclaration = lignedeclarations::create([
                     'declarations_iddeclarations' => $declaration->iddeclarations,
-                    'libelle' => 'ligne'
+                    'libelle' => $line['libelle'],
                 ]);
-    
+
+                Log::info("   📄 LigneDeclaration created with ID: " . $ligneDeclaration->idlignedeclarations);
+
                 ligne_lignedecalarations::create([
                     'valeurs' => $line['valeur'],
                     'lignedeclarations_idlignedeclarations' => $ligneDeclaration->idlignedeclarations,
                     'lignes_parametres_decalarations_idlignes_parametres_decalarations' => $line['param_id']
                 ]);
+
+                Log::info("   ✅ Ligne_lignedecalarations created for param_id: " . $line['param_id']);
             }
-    
-            DB::commit(); // Commit transaction
-            return response()->json(['message' => 'Declaration created successfully'], 201);
-    
+
+            DB::commit();
+            Log::info("🎉 Declaration successfully committed.");
+            return response()->json(['message' => 'Déclaration créée avec succès'], 201);
+
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback transaction if any error occurs
-            \Log::error('Error creating declaration: '.$e->getMessage());
-            return response()->json(['message' => 'Failed to create declaration', 'error' => $e->getMessage()], 500);
+            DB::rollBack();
+            Log::error('💥 Erreur lors de la création de la déclaration: '.$e->getMessage());
+            Log::error('Stack trace: '.$e->getTraceAsString());
+            return response()->json([
+                'message' => 'Échec de la création de la déclaration',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
+
+
     
 
     // Get all available declaration types
@@ -423,6 +460,85 @@ class DeclarationController extends Controller
         return response()->json([
             'types' => $types
         ]);
+    }
+
+
+    //get all declarations of theauthenticated client 
+    public function getClientDeclarations(Request $request)
+    {
+        Log::info("🔹 Fetching declarations for authenticated client...");
+
+        try {
+            $user = Auth::user();
+            Log::info("👤 Authenticated user ID: {$user->id}, type: {$user->user_type}");
+
+            // Ensure the user is a client
+            if ($user->usertype !== 'client') {
+                Log::warning("⚠️ Unauthorized access attempt by user ID: {$user->id}");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 403);
+            }
+            // get the client id from the authenticate user 
+            $client = Clients_comptables::where('email', $user->email)->first();
+            Log::info(message: "Authenticated client   :  $client");
+
+
+            // Fetch all declarations of this client
+            $declarations = declarations::with([
+                'lignedeclarations.lignes',
+            ])
+            ->where('Clients_comptable_idClients', $client->idClients)
+            ->orderBy('datedeclaration', 'desc')
+            ->get();
+
+            Log::info("📦 Declarations fetched: " . $declarations->count());
+
+            // Format response
+            $result = $declarations->map(function($declaration) {
+                Log::info("📝 Processing declaration ID: {$declaration->iddeclarations}");
+                return [
+                    'id' => $declaration->iddeclarations,
+                    'typedeclaration' => $declaration->typedeclaration,
+                    'anneemois' => $declaration->anneemois,
+                    'etat_declaration' => $declaration->etat_declaration,
+                    Log::info("etat declaration : {$declaration->etat_declaration}"),
+                    'document' => $declaration->document ? asset('storage/' . $declaration->document) : null,
+                    'datedeclaration' => $declaration->datedeclaration,
+                    'lines' => $declaration->lignedeclarations->map(function($line) {
+                        Log::info("   ➖ Processing ligne ID: {$line->idlignedeclarations}");
+                        return [
+                            'id' => $line->idlignedeclarations,
+                            'libelle' => $line->libelle,
+                            'values' => $line->lignes->map(function($subLine) {
+                                Log::info("      📄 Ligne_lignedecalarations param_id: {$subLine->lignes_parametres_decalarations_idlignes_parametres_decalarations}, valeur: {$subLine->valeurs}");
+                                return [
+                                    'param_id' => $subLine->lignes_parametres_decalarations_idlignes_parametres_decalarations,
+                                    'valeur' => $subLine->valeurs,
+                                ];
+                            }),
+                        ];
+                    }),
+                ];
+            });
+
+            Log::info("✅ Successfully prepared declarations response.");
+
+            return response()->json([
+                'success' => true,
+                'declarations' => $result
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("💥 Error fetching client declarations: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur serveur: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 

@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:file_picker/file_picker.dart';
 
 class AddDeclaration extends StatefulWidget {
   const AddDeclaration({super.key});
@@ -18,9 +20,11 @@ class _AddDeclarationState extends State<AddDeclaration> {
 
   List<Map<String, dynamic>> _types = [];
   Map<String, dynamic>? _selectedType;
-
   List<Map<String, dynamic>> _lines = [];
   final Map<int, TextEditingController> _lineControllers = {};
+
+  String? _selectedAnneemois;
+  File? _selectedFile;
 
   @override
   void initState() {
@@ -83,7 +87,6 @@ class _AddDeclarationState extends State<AddDeclaration> {
           return {
             'id': e['idlignes_parametres_decalarations'],
             'libelle': "${e['libellee']} / ${e['libelleeArabe']}",
-            'debit_credit': e['debit_credit'],
           };
         }).toList();
 
@@ -103,19 +106,52 @@ class _AddDeclarationState extends State<AddDeclaration> {
     }
   }
 
-  Future<void> _submitDeclaration() async {
-    print("=== SUBMIT DECLARATION START ===");
+  Future<void> _pickFile() async {
+    if (_selectedFile != null) {
+      setState(() => _selectedFile = null);
+      _showFlushBar("Fichier désélectionné", bg: Colors.orange);
+      return;
+    }
 
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      setState(() => _selectedFile = File(result.files.single.path!));
+      _showFlushBar(
+        "Fichier sélectionné : ${result.files.single.name}",
+        bg: Colors.green,
+      );
+    }
+  }
+
+  Future<void> _selectAnneemois(BuildContext context) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(now.year - 2),
+      lastDate: DateTime(now.year + 2),
+      helpText: 'Choisissez une année et un mois',
+    );
+    if (picked != null) {
+      setState(() => _selectedAnneemois =
+          "${picked.year}-${picked.month.toString().padLeft(2, '0')}");
+    }
+  }
+
+  Future<void> _submitDeclaration() async {
     if (_selectedType == null) {
-      print("No type selected!");
       _showFlushBar("Veuillez sélectionner un type", bg: Colors.red);
       return;
     }
-
-    if (!_formKey.currentState!.validate()) {
-      print("Form validation failed!");
+    if (_selectedAnneemois == null) {
+      _showFlushBar("Veuillez choisir l'année et le mois", bg: Colors.red);
       return;
     }
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _loading = true);
 
@@ -124,59 +160,51 @@ class _AddDeclarationState extends State<AddDeclaration> {
       final token = prefs.getString('token') ?? '';
       final clientId = prefs.getInt('client_id') ?? 0;
 
-      print("Client ID: $clientId");
-      print("Selected Type: ${_selectedType!['typedeclaration']} / ${_selectedType!['typedeclarationArabe']}");
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse("http://10.0.2.2:8000/api/declarations"),
+      );
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['client_id'] = clientId.toString();
+      request.fields['typedeclaration'] = _selectedType!['typedeclaration'];
+      request.fields['anneemois'] = _selectedAnneemois!;
 
-      final linesData = _lines.map((line) {
-        final value = _lineControllers[line['id']]?.text ?? '';
-        print("Line ID: ${line['id']}, Value: $value");
+      final linesJson = _lines.map((line) {
         return {
           'param_id': line['id'],
-          'valeur': value,
+          'valeur': _lineControllers[line['id']]?.text ?? '',
+          'libelle': line['libelle']
         };
       }).toList();
+      request.fields['lines'] = json.encode(linesJson);
 
-      final body = {
-        'client_id': clientId,
-        'typedeclaration': _selectedType!['typedeclaration'],
-        'anneemois': DateTime.now().toIso8601String().substring(0, 7),
-        'lines': linesData,
-      };
+      if (_selectedFile != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'document',
+          _selectedFile!.path,
+        ));
+      }
 
-      print("POST Body: ${json.encode(body)}");
-
-      final response = await http.post(
-        Uri.parse("http://10.0.2.2:8000/api/declarations"),
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: json.encode(body),
-      );
-
-      print("Response Status: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
-      final data = json.decode(response.body);
+      final response = await request.send();
+      final respStr = await response.stream.bytesToString();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Declaration successfully submitted!");
         _showFlushBar("Déclaration ajoutée avec succès", bg: Colors.green);
         _lineControllers.forEach((key, controller) => controller.clear());
+        setState(() {
+          _selectedAnneemois = null;
+          _selectedFile = null;
+        });
       } else {
-        print("Error submitting declaration: ${data['message']}");
+        final data = json.decode(respStr);
         _showFlushBar(data['message'] ?? "Échec de l'ajout", bg: Colors.red);
       }
     } catch (e) {
-      print("Exception caught: $e");
       _showFlushBar("Erreur: $e", bg: Colors.red);
     } finally {
       setState(() => _loading = false);
-      print("=== SUBMIT DECLARATION END ===");
     }
   }
-
 
   @override
   void dispose() {
@@ -187,75 +215,216 @@ class _AddDeclarationState extends State<AddDeclaration> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ajouter Déclaration"),
-        backgroundColor: const Color.fromARGB(255, 102, 0, 0),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 102, 0, 0),
+              Color.fromARGB(255, 251, 64, 64),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
           child: Column(
             children: [
-              // Declaration type dropdown
-              DropdownButtonFormField<Map<String, dynamic>>(
-                value: _selectedType,
-                items: _types.map((typeMap) {
-                  return DropdownMenuItem<Map<String, dynamic>>(
-                    value: typeMap,
-                    child: Text(
-                      "${typeMap['typedeclaration']} / ${typeMap['typedeclarationArabe']}",
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() => _selectedType = value);
-                  if (value != null) _fetchFieldsForType(value['typedeclaration']);
-                },
-                decoration: const InputDecoration(
-                  labelText: "Type de déclaration",
-                  border: OutlineInputBorder(),
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                validator: (value) =>
-                    value == null ? "Veuillez choisir un type" : null,
+                title: const Text(
+                  "Ajouter Déclaration",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-              const SizedBox(height: 16),
-
-              // Dynamic fields
-              _loadingFields
-                  ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: _lines.map((line) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: TextFormField(
-                            controller: _lineControllers[line['id']],
-                            decoration: InputDecoration(
-                              labelText: line['libelle'],
-                              border: const OutlineInputBorder(),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Card(
+                    color: Colors.white.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            const Center(
+                              child: Text(
+                                "Remplir les informations de la déclaration",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                            keyboardType: TextInputType.number,
-                            validator: (value) => value == null || value.isEmpty
-                                ? "Veuillez entrer une valeur"
-                                : null,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-              const SizedBox(height: 24),
-              _loading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _submitDeclaration,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: const Color(0xFFb8860b),
+                            const SizedBox(height: 20),
+
+                            // Type dropdown
+                            DropdownButtonFormField<Map<String, dynamic>>(
+                              dropdownColor:
+                                  const Color.fromARGB(255, 102, 0, 0),
+                              initialValue: _selectedType,
+                              items: _types.map((typeMap) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: typeMap,
+                                  child: Text(
+                                    "${typeMap['typedeclaration']} / ${typeMap['typedeclarationArabe']}",
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() => _selectedType = value);
+                                if (value != null) {
+                                  _fetchFieldsForType(value['typedeclaration']);
+                                }
+                              },
+                              decoration: const InputDecoration(
+                                labelText: "Type de déclaration",
+                                labelStyle: TextStyle(color: Colors.white),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white54),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                              ),
+                              validator: (value) =>
+                                  value == null ? "Veuillez choisir un type" : null,
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            // Show rest only if type selected
+                            if (_selectedType != null)
+                              Column(
+                                children: [
+                                  // Date selector
+                                  InkWell(
+                                    onTap: () => _selectAnneemois(context),
+                                    child: InputDecorator(
+                                      decoration: const InputDecoration(
+                                        labelText: "Année et Mois",
+                                        labelStyle: TextStyle(color: Colors.white70),
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.white54),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            _selectedAnneemois ?? "Choisir une date",
+                                            style: const TextStyle(color: Colors.white),
+                                          ),
+                                          const Icon(Icons.calendar_today,
+                                              color: Colors.white),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 20),
+
+                                  // Dynamic fields
+                                  if (_loadingFields)
+                                    const CircularProgressIndicator(color: Colors.white)
+                                  else
+                                    Column(
+                                      children: _lines.map((line) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                          child: TextFormField(
+                                            controller: _lineControllers[line['id']],
+                                            style: const TextStyle(color: Colors.white),
+                                            decoration: InputDecoration(
+                                              labelText: line['libelle'],
+                                              labelStyle: const TextStyle(color: Colors.white70),
+                                              enabledBorder: const UnderlineInputBorder(
+                                                borderSide: BorderSide(color: Colors.white54),
+                                              ),
+                                              focusedBorder: const UnderlineInputBorder(
+                                                borderSide: BorderSide(color: Colors.white),
+                                              ),
+                                            ),
+                                            keyboardType: TextInputType.number,
+                                            validator: (value) =>
+                                                value == null || value.isEmpty ? "Requis" : null,
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+
+                                  const SizedBox(height: 20),
+
+                                  // Upload button
+                                  ElevatedButton.icon(
+                                    icon: Icon(
+                                      _selectedFile == null ? Icons.upload_file : Icons.close,
+                                      color: Colors.black87,
+                                    ),
+                                    label: Text(
+                                      _selectedFile == null
+                                          ? "Ajouter un document"
+                                          : _selectedFile!.path.split('/').last,
+                                      style: const TextStyle(color: Colors.black87),
+                                    ),
+                                    onPressed: _pickFile,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      minimumSize: const Size(double.infinity, 50),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      elevation: 2,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 15),
+
+                                  // Submit button
+                                  _loading
+                                      ? const CircularProgressIndicator(color: Colors.white)
+                                      : ElevatedButton.icon(
+                                          icon: const Icon(Icons.add_circle, color: Colors.black87),
+                                          label: const Text(
+                                            "Ajouter Déclaration",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          onPressed: _submitDeclaration,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            minimumSize: const Size(double.infinity, 50),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            elevation: 2,
+                                          ),
+                                        ),
+                                ],
+                              ),
+                          ],
+                        ),
                       ),
-                      child: const Text(
-                        "Ajouter Déclaration",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
                     ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

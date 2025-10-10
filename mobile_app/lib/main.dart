@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/declarations.dart';
 import 'screens/splash_screen.dart';
 import 'screens/sign_in.dart';
 import 'screens/client_home.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/clientHome': (context) => const ClientHomePage(),
         '/signIn': (context) => const SignInPage(),
+        '/declarations':(context) => const DeclarationsPage(),
         // Add more routes here if needed
       },
     );

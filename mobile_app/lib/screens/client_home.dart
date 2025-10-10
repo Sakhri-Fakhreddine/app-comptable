@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'profile.dart';
 import 'adddeclaration.dart';
+import 'declarations.dart';
 
 class ClientHomePage extends StatefulWidget {
   const ClientHomePage({super.key});
@@ -36,20 +37,25 @@ class _ClientHomePageState extends State<ClientHomePage> {
   }
 
   void _openNotifications() {
-    _showFlushbar("Notifications clicked", bg: Colors.blue);
+    //_showFlushbar("Notifications clicked", bg: Colors.blue);
     // Navigate to notifications page if needed
   }
 
   void _addDeclaration() {
-  _showFlushbar("Ajouter Déclaration clicked", bg: Colors.blue);
-  
-  // Navigate to AddDeclaration page
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const AddDeclaration()),
-  );
-}
+    //_showFlushbar("Ajouter Déclaration clicked", bg: Colors.blue);
+    // Navigate to AddDeclaration page
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddDeclaration()),
+    );
+  }
 
+  void _myDeclarations() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const DeclarationsPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +66,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(220, 50, 0, 0),
-                Color.fromARGB(220, 150, 0, 0)
+                Color.fromARGB(220, 150, 0, 0),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -74,15 +80,18 @@ class _ClientHomePageState extends State<ClientHomePage> {
                 child: Text(
                   'Accounting Hall',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.person, color: Colors.white),
-                title:
-                    const Text('Profil', style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Profil',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
@@ -96,8 +105,10 @@ class _ClientHomePageState extends State<ClientHomePage> {
               const Divider(color: Colors.white54),
               ListTile(
                 leading: const Icon(Icons.add, color: Colors.white),
-                title: const Text('Ajouter Déclaration',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Ajouter Déclaration',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   _addDeclaration();
@@ -105,10 +116,13 @@ class _ClientHomePageState extends State<ClientHomePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.list, color: Colors.white),
-                title: const Text('Mes Déclarations',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Mes Déclarations',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () {
                   Navigator.pop(context);
+                  _myDeclarations();
                 },
               ),
             ],
@@ -122,7 +136,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 102, 0, 0),
-              Color.fromARGB(255, 251, 64, 64)
+              Color.fromARGB(255, 251, 64, 64),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -143,7 +157,10 @@ class _ClientHomePageState extends State<ClientHomePage> {
                   Stack(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.notifications, color: Colors.white),
+                        icon: const Icon(
+                          Icons.notifications,
+                          color: Colors.white,
+                        ),
                         onPressed: _openNotifications,
                       ),
                       if (_notificationCount > 0)
@@ -178,7 +195,9 @@ class _ClientHomePageState extends State<ClientHomePage> {
                       popupMenuTheme: PopupMenuThemeData(
                         color: const Color.fromARGB(220, 50, 0, 0),
                         textStyle: const TextStyle(
-                            color: Colors.white, fontSize: 16),
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -205,7 +224,10 @@ class _ClientHomePageState extends State<ClientHomePage> {
                             children: const [
                               Icon(Icons.person, color: Colors.white),
                               SizedBox(width: 8),
-                              Text('Profil', style: TextStyle(color: Colors.white)),
+                              Text(
+                                'Profil',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ],
                           ),
                         ),
@@ -215,8 +237,10 @@ class _ClientHomePageState extends State<ClientHomePage> {
                             children: const [
                               Icon(Icons.logout, color: Colors.white),
                               SizedBox(width: 8),
-                              Text('Se déconnecter',
-                                  style: TextStyle(color: Colors.white)),
+                              Text(
+                                'Se déconnecter',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ],
                           ),
                         ),
