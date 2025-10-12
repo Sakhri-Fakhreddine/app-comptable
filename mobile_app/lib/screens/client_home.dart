@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/contact_comptable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'profile.dart';
@@ -54,6 +55,12 @@ class _ClientHomePageState extends State<ClientHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const DeclarationsPage()),
+    );
+  }
+  void _contactComptables() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ContactComptable()),
     );
   }
 
@@ -123,6 +130,17 @@ class _ClientHomePageState extends State<ClientHomePage> {
                 onTap: () {
                   Navigator.pop(context);
                   _myDeclarations();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.mail, color: Colors.white),
+                title: const Text(
+                  'Contacter Comptable',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _contactComptables();
                 },
               ),
             ],

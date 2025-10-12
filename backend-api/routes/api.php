@@ -81,6 +81,11 @@ Route::post('/admin/send-email', [MailingController::class, 'sendEmail']);
     Route::get('/clients/{id}/declarations', [DeclarationController::class, 'getClientDeclarations']);
     Route::get('/declaration/types', [DeclarationController::class, 'getTypes']);
     Route::get('/client-declarations', [DeclarationController::class, 'getClientDeclarations']);
+    Route::get('/declarations/{id}', [DeclarationController::class, 'getDeclarationById']);
+    Route::post('/declarations/{id}', [DeclarationController::class, 'updateDeclaration']);
+    Route::get('/comptablemail',[ClientController::class,'getComptableMail']);
+    Route::post('/sendmail',[ClientController::class,'sendEmailToComptable']);
+
 
 
 

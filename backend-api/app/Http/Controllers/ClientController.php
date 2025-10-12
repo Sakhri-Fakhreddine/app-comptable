@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clients_comptables;
+use App\Models\Comptables;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Mail;
 
 class ClientController extends Controller
 {
@@ -134,5 +136,48 @@ class ClientController extends Controller
         $client->save();
 
         return response()->json(['message' => 'Mot de passe mis à jour avec succès']);
+    }
+
+
+    public function getComptableMail (Request $request){
+        log::info('trying to fetch comptable mail ...');
+
+        $user = $request->user();
+        $client = Clients_comptables::where('email',$user->email)->first();
+        log::info("fetched client : {$client}");
+        $comptable = Comptables::where('idComptable',$client->id_comptable)->first();
+        log::info("fetched comptable mail :{$comptable->email}");
+        return response()->json(['email'=>$comptable->email]);
+    }
+
+    public function sendEmailToComptable (Request $request) {
+        log::info("trying to send an email starts now ...");
+
+        $validated = $request->validate(
+            ['subject' => 'required|string|max:255',
+            'message' => 'nullable|string|max:255',
+            'to' => 'required|email',]
+        );
+
+        Log::info("Validated data : " . json_encode($validated));
+
+        
+        $user = $request->user();
+
+            $client = Clients_comptables::where('email',$user->email)->first();
+            log::info("fetched client : {$client}");
+            
+            // Prepare email content
+            $subject = $validated['subject'];
+            $messageBody = $validated['message'];
+            $reciever = $validated['to'];
+
+            // Send the email
+            Mail::raw($messageBody, function ($message) use ($reciever, $subject) {
+                $message->to($reciever)
+                        ->subject($subject);
+            });
+
+            log::info('the mail has been sent successfully ');
     }
 }

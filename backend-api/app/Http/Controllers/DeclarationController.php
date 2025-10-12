@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Models\notifications;
 
 
 class DeclarationController extends Controller
@@ -426,6 +428,30 @@ class DeclarationController extends Controller
 
                 Log::info("   ✅ Ligne_lignedecalarations created for param_id: " . $line['param_id']);
             }
+            // Optionally send email 
+            // get the user and the related comptable 
+            $client = Clients_comptables::where('idClients',$validated['client_id'])->first();
+            log::info("fetched client : {$client}");
+            $comptable = Comptables::where ('idComptable',$client->id_comptable)->first();
+            log::info("fetched comptable : {$comptable}");
+            // Prepare email content
+            $subject = "Création d'une declaration";
+            $messageBody = "le client vient de faire un declaration veuillez la consulter :\n";
+            $messageBody .= "nom et prenom du client  : " . $client->Nomprenom . "\n";
+            $messageBody .= "email du  client : " . $client->email . "\n";
+
+            // Send the email
+            Mail::raw($messageBody, function ($message) use ($comptable, $subject) {
+                $message->to($comptable->email)
+                        ->subject($subject);
+            });
+            // 🔔 Create a notification for the admin
+            notifications::create([
+                'destination' => 'comptable',
+                'id_destination' => $comptable->idComptable, // if you have multiple admins, you can set an ID, else null means global
+                'contenu_notification' => "Une nouvelle declaration a été soumise par {$client->Nomprenom} ({$client->email})",
+                'etat_notification' => 'non vu', // default state: unread
+            ]);
 
             DB::commit();
             Log::info("🎉 Declaration successfully committed.");
@@ -541,7 +567,148 @@ class DeclarationController extends Controller
         }
     }
 
+    public function getDeclarationById($id)
+    {
+        try {
+            Log::info("🔍 Fetching declaration ID: {$id}");
 
+            // Load declaration with all necessary relations
+            $declaration = declarations::with([
+                'lignedeclarations.lignes' // Load sub-lines (param/value pairs)
+            ])->find($id);
+
+            if (!$declaration) {
+                Log::warning("⚠️ Declaration ID {$id} not found");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Déclaration introuvable.',
+                ], 404);
+            }
+
+            // ✅ Format data for the frontend edit form
+            $formattedDeclaration = [
+                'id' => $declaration->iddeclarations,
+                'typedeclaration' => $declaration->typedeclaration,
+                'anneemois' => $declaration->anneemois,
+                'etat_declaration' => $declaration->etat_declaration,
+                'client_id' => $declaration->Clients_comptable_idClients,
+                'datedeclaration' => $declaration->datedeclaration,
+                'document' => $declaration->document ? asset('storage/' . $declaration->document) : null,
+                'created_at' => $declaration->created_at,
+                'updated_at' => $declaration->updated_at,
+                'lines' => $declaration->lignedeclarations->map(function ($line) {
+                    return [
+                        'id' => $line->idlignedeclarations,
+                        'libelle' => $line->libelle,
+                        'values' => $line->lignes->map(function ($subLine) {
+                            return [
+                                'id' => $subLine->idligne_lignedecalaration ?? null,
+                                'ligne_id' => $subLine->lignedeclarations_idlignedeclarations,
+                                'valeur' => $subLine->valeurs,
+                            ];
+                        }),
+                    ];
+                }),
+            ];
+
+            Log::info("✅ Declaration data ready for edit form: " . json_encode($formattedDeclaration));
+
+            return response()->json([
+                'success' => true,
+                'declaration' => $formattedDeclaration,
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error("❌ Error fetching declaration: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération de la déclaration.',
+            ], 500);
+        }
+    }
+
+
+    public function updateDeclaration(Request $request, $id)
+    {
+        try {
+            Log::info("✏️ Updating declaration ID: {$id}");
+    
+            // Decode lines JSON if it's a string (MultipartRequest sends JSON as string)
+            if ($request->has('lines') && is_string($request->lines)) {
+                $request->merge([
+                    'lines' => json_decode($request->lines, true)
+                ]);
+            }
+    
+            $validated = $request->validate([
+                'anneemois' => 'required|string|max:7',
+                'etat_declaration' => 'required|string',
+                'lines' => 'required|array',
+                'lines.*.id' => 'required|integer|exists:lignedeclarations,idlignedeclarations',
+                'lines.*.valeur' => 'required|string',
+            ]);
+    
+    
+            $declaration = declarations::find($id);
+            if (!$declaration) {
+                Log::warning("⚠️ Declaration ID {$id} not found for update");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Déclaration introuvable.',
+                ], 404);
+            }
+    
+            // Update main declaration fields
+            $declaration->anneemois = $validated['anneemois'];
+            $declaration->etat_declaration = $validated['etat_declaration'];
+    
+            // Handle document upload
+            if ($request->hasFile('document')) {
+                if ($declaration->document) {
+                    // Optional: delete old file
+                    @unlink(storage_path('app/public/declarations_docs/' . basename($declaration->document)));
+                }
+                $path = $request->file('document')->store('declarations_docs', 'public');
+                $declaration->document = $path; // store relative path
+            }
+    
+            $declaration->save();
+    
+            // Update **only the valeur** of existing lines
+            foreach ($validated['lines'] as $lineData) {
+                $line = lignedeclarations::where('idlignedeclarations', $lineData['id'])->first();
+                if ($line) {
+                    Log::info("📝 Updating line ID {$lineData['id']}  with new value: {$lineData['valeur']}");
+                    $subline = ligne_lignedecalarations::where('lignedeclarations_idlignedeclarations',$line->idlignedeclarations)->first();
+                    if($subline){
+                    Log::info("📝 Updating sublineline ID  {$subline->idligne_lignedecalaration}");
+                    $subline->valeurs = $lineData['valeur'];
+                    $subline->save();
+                    }
+                }
+            }
+    
+            Log::info("✅ Declaration updated successfully.");
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Déclaration mise à jour avec succès.',
+                'document' => $declaration->document ? asset('storage/' . $declaration->document) : null,
+            ]);
+    
+        } catch (\Exception $e) {
+            Log::error("❌ Error updating declaration: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour de la déclaration.',
+            ], 500);
+        }
+    }
+    
+    
+    
 
 
 

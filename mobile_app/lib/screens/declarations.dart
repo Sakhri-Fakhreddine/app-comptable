@@ -76,7 +76,7 @@ class _DeclarationsPageState extends State<DeclarationsPage> {
       case 'refusée':
         return Colors.redAccent;
       default:
-        return Colors.white;
+        return Colors.greenAccent;
     }
   }
 
@@ -180,28 +180,29 @@ class _DeclarationsPageState extends State<DeclarationsPage> {
                                           ),
                                         ),
                                       const SizedBox(height: 12),
-                                      ElevatedButton.icon(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => EditDeclarationPage(
-                                                declaration: decl,
+                                      if (etat.toLowerCase() == "en cours")
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => EditDeclarationPage(
+                                                  declaration: decl['id'],
+                                                ),
                                               ),
+                                            );
+                                          },
+                                          icon: const Icon(Icons.edit, color: Colors.black),
+                                          label: const Text("Modifier"),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12),
                                             ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.edit, color: Colors.black),
-                                        label: const Text("Modifier"),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 10),
                                         ),
-                                      ),
                                     ],
                                   ),
                                 ),
