@@ -14,6 +14,7 @@ export class HeaderComponent implements OnInit {
   isAdmin: boolean = false;
   userType: string | null = null;
   userName: string = '';
+  unreadNotifications: any[] = [];
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -22,6 +23,7 @@ export class HeaderComponent implements OnInit {
     this.authService.authStatus$.subscribe(status => {
     this.isAuthenticated = status;
     this.isAdmin = this.authService.isAdmin();
+    this.loadNotifications();
     });
 
     // Subscribe to user info changes
@@ -57,6 +59,33 @@ export class HeaderComponent implements OnInit {
     if (this.userType === 'client') return '/clienthome';
     return '/';
   }
+
+  loadNotifications() {
+    this.authService.getNotifications().subscribe({
+      next: (data) => {
+        console.log('Fetched notifications:', data); // <-- log all notifications
+        this.unreadNotifications = data;
+      },
+      error: (err) => console.error('Failed to load notifications', err)
+    });
+  }
+  
+  markAsSeen(notification: any, event: Event) {
+    event.preventDefault(); // prevents page reload
+  
+    console.log('Marking as seen:', notification); // <-- add log to check
+  
+    this.authService.markAsRead([notification.idnotifications]).subscribe({
+      next: () => {
+        notification.etat_notification = 'vu';
+        this.unreadNotifications = this.unreadNotifications.filter(n => n.etat_notification === 'unread');
+        console.log('Updated unread notifications:', this.unreadNotifications);
+      },
+      error: (err) => console.error('Failed to mark notification as seen', err)
+    });
+  }
+  
+
 
   logout(): void {
     this.authService.logout().subscribe({

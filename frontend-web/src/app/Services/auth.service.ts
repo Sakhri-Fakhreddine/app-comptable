@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -73,6 +73,22 @@ export class AuthService {
 
   resetpassword(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/reset-password`, data);
+  }
+
+  getNotifications(): Observable<any[]> {
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<any[]>(`${this.apiUrl}/notifications`, { headers });
+  }
+  
+  markAsRead(ids: number[]): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.post(`${this.apiUrl}/notifications/read`, { ids }, { headers });
   }
 
   logout(): Observable<any> {

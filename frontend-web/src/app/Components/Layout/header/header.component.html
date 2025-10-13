@@ -9,20 +9,48 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item" routerLinkActive="active">
-              <a class="nav-link"[routerLink]="getHomeLink()">Accueil</a>
+              <a class="nav-link"[routerLink]="getHomeLink()"><i class="fa-solid fa-house me-2"></i>Accueil</a>
             </li> 
             <li class="nav-item">
-              <a class="nav-link" href="contact">Contacter nous</a>
+              <a class="nav-link" href="contact"><i class="fa-solid fa-envelope me-2"></i>Contacter nous</a>
             </li>
             
             <!-- Check if user is authenticated -->
             <ng-container *ngIf="isAuthenticated; else loggedOut">
               <li class="nav-item">
-                <a class="nav-link" [routerLink]="['/clientslist']">Mes clients</a>
+                <a class="nav-link" [routerLink]="['/clientslist']"><i class="fa-solid fa-users me-2"></i>Mes clients</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" [routerLink]="['/settingslist']">Parametres de Declatration</a>
+                <a class="nav-link" [routerLink]="['/declarations']"><i class="fa-solid fa-clipboard-list me-2"></i>Declarations</a>
               </li>
+              <li class="nav-item topbar-icon dropdown hidden-caret">
+                <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-bell"></i>
+                  <span class="notification">{{ unreadNotifications.length }}</span>
+                </a>
+              
+                <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
+                    <li>
+                      <div class="dropdown-title">
+                        You have {{ unreadNotifications.length }} new notification
+                      </div>
+                    </li>
+                    <a *ngFor="let notif of unreadNotifications" href="#" (click)="markAsSeen(notif, $event)">
+                      <div class="notif-icon notif-primary">
+                        <i class="fa fa-info-circle"></i>
+                      </div>
+                      <div class="notif-content">
+                        <span class="block">{{ notif.contenu_notification }}</span>
+                        <span class="time">{{ notif.created_at | date:'shortTime' }}</span>
+                      </div>
+                    </a>
+                    
+                    <li>
+                      <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+              </li>
+              
               <!-- Dropdown for profile actions  -->
               <li class="nav-item topbar-user dropdown hidden-caret">
                 <a
@@ -76,7 +104,7 @@
                       <a class="dropdown-item" [routerLink]="['/edit-profile']">Mon Profile</a>
                       <a class="dropdown-item" href="#">Messages</a>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">Paramètres du compte</a>
+                      <a class="dropdown-item" [routerLink]="['/settingslist']">Parametres de Declatration</a>
                       <div class="dropdown-divider"></div>
                       <button class="dropdown-item" (click)="logout()">Déconnecter</button>
                     </li>

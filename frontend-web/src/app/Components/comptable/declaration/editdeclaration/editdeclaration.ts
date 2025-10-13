@@ -95,18 +95,32 @@ export class Editdeclaration implements OnInit {
   // --- Save updated declaration ---
   saveDeclaration() {
     if (this.declarationForm.invalid) return;
-
-    this.comptableService.updateDeclaration(this.declarationId, this.declarationForm.value).subscribe({
+  
+    // Prepare flattened payload
+    const rawValue = this.declarationForm.value;
+    const formatted = {
+      anneemois: rawValue.anneemois,
+      etat_declaration: rawValue.etat_declaration,
+      lines: rawValue.lines.map((line: any) => ({
+        id: line.id,
+        valeur: line.values[0]?.valeur || ''  // take first valeur
+      }))
+    };
+  
+    console.log('🟦 Sending to backend:', formatted);
+  
+    this.comptableService.updateDeclaration(this.declarationId, formatted).subscribe({
       next: () => {
-        alert('Déclaration mise à jour avec succès !');
+        alert('✅ Déclaration mise à jour avec succès !');
         this.router.navigate(['/declarations']);
       },
       error: (err) => {
-        console.error(err);
+        console.error('❌ Backend error:', err);
         this.errorMessage = 'Erreur lors de la mise à jour.';
       }
     });
   }
+  
 
   printDeclaration() {
     const printContents = document.querySelector('.card-body')?.innerHTML;
