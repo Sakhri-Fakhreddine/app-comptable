@@ -1,0 +1,90 @@
+<!-- Banner -->
+<div class="banner header-text"></div>
+
+<!-- Contact Form Section -->
+<div class="latest-products">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card shadow-sm clients-card">
+          <div class="card-header">
+            <h5 class="m-0">📬 Contactez-nous</h5>
+          </div>
+
+          <div class="card-body">
+            <div class="contact-container" *ngIf="!isLoading; else loading">
+              <form [formGroup]="contactForm" (ngSubmit)="sendMessage()" class="contact-form">
+                <div class="form-group mb-3">
+                  <label for="name">
+                    <i class="fa-solid fa-person"></i>
+                    Nom complet</label>
+                  <input id="name" type="text" formControlName="name" class="form-control" placeholder="Entrez votre nom">
+                  <div *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched" class="text-danger small">
+                    Le nom est obligatoire et doit comporter au moins 3 caractères.
+                  </div>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="email">
+                    <i class="fa-solid fa-envelope"></i>
+                    Adresse e-mail</label>
+                  <input id="email" type="email" formControlName="email" class="form-control" placeholder="exemple@email.com">
+                  <div *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="text-danger small">
+                    Entrez une adresse e-mail valide.
+                  </div>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="subject">
+                    <i class="fa-solid fa-pencil"></i>
+                    Sujet</label>
+                  <input id="subject" type="text" formControlName="subject" class="form-control" placeholder="Sujet du message">
+                  <div *ngIf="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched" class="text-danger small">
+                    Le sujet est obligatoire.
+                  </div>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="message">
+                    <i class="fa-solid fa-comment"></i>
+                    Message</label>
+                  <textarea id="message" formControlName="message" rows="5" class="form-control" placeholder="Écrivez votre message ici..."></textarea>
+                  <div *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched" class="text-danger small">
+                    Le message doit comporter au moins 10 caractères.
+                  </div>
+                </div>
+
+                <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+                <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                  <button type="submit" class="btn btn-dark-golden px-4" [disabled]="contactForm.invalid || isLoading">
+                    <i class="fa-solid fa-paper-plane"></i> Envoyer
+                  </button>
+
+                  <button type="button" class="btn btn-outline-secondary ms-2" (click)="goBack()">
+                    <i class="fa-solid fa-turn-up"></i> Annuler
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <ng-template #loading>
+              <p class="loading-text text-center">📨 Envoi du message en cours...</p>
+            </ng-template>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fade animation -->
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

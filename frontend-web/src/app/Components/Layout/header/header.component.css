@@ -1,107 +1,80 @@
-.navbar-brand {
-    align-self: center;
+.contact-container {
+  max-width: 700px;
+  margin: 60px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
 }
-/* Ultimate right alignment in navbar */
-.ms-auto {
-    margin-left: auto;
-    align-self: center;
-  }
-  
-  /* Dark golden button */
-  .btn-dark-golden {
-    background-color: #b8860b; /* dark goldenrod */
-    color: white;
-    border: none;
-    padding: 0.4rem 0.6rem;
-  }
-  
-  /* Hover / focus styles */
-  .btn-dark-golden:hover,
-  .btn-dark-golden:focus {
-    background-color: #8b6508;
-    color: white;
-    box-shadow: 0 0 8px rgba(184, 134, 11, 0.7);
-  }
-  
-  /* Hamburger icon */
-  .hamburger-icon {
-    display: inline-block;
-    width: 20px;
-    height: 14px;
-    position: relative;
-  }
-  
-  .hamburger-icon span {
-    display: block;
-    height: 2px;
-    background-color: white;
-    margin: 4px 0;
-    border-radius: 1px;
-  }
-  
 
+.page-title {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #333;
+}
 
+.contact-form .form-group {
+  margin-bottom: 20px;
+}
 
-  /* //////////////////// */
-  
+label {
+  font-weight: 500;
+  color: #444;
+  display: block;
+  margin-bottom: 6px;
+}
 
-  /* Dark gold dropdown toggle button */
-.dark-gold-dropdown-toggle {
-  background-color: #b8860b; /* Dark gold */
-  color: #fff;
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
   border-radius: 8px;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background 0.3s ease;
+  border: 1px solid #ccc;
+  transition: 0.3s ease;
 }
 
-.dark-gold-dropdown-toggle:hover {
-  background-color: #d4af37; /* Lighter gold on hover */
-  color: #fff;
+.form-control:focus {
+  border-color: #c8a54e;
+  box-shadow: 0 0 5px rgba(200, 165, 78, 0.4);
 }
 
-/* Dropdown menu style */
-.dark-gold-dropdown-menu {
-  background-color: #3a2e0b; /* Dark background */
+.btn-dark-golden {
+  background-color: #c8a54e;
+  color: white;
+  font-weight: 600;
   border: none;
   border-radius: 8px;
-  min-width: 220px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  overflow: hidden;
-}
-
-/* Dropdown links */
-.dark-gold-dropdown-menu .dropdown-item {
-  color: #fff;
-  padding: 10px 16px;
+  padding: 10px;
   transition: background 0.3s;
 }
 
-.dark-gold-dropdown-menu .dropdown-item:hover {
-  background-color: #b8860b;
-  color: #fff;
+.btn-dark-golden:hover {
+  background-color: #b8973b;
 }
 
-/* User box */
-.user-box {
-  background-color: #4b3a0b;
+.text-danger {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.alert {
   border-radius: 8px;
+  padding: 10px 15px;
 }
 
-/* Animation for dropdown */
-@keyframes fadeInDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.alert-success {
+  background-color: #e8f8ec;
+  color: #2d7a36;
 }
 
-.animated.fadeInDown {
-  animation: fadeInDown 0.4s ease forwards;
+.alert-danger {
+  background-color: #fdecea;
+  color: #a94442;
+}
+
+.loading-text {
+  text-align: center;
+  margin-top: 80px;
+  color: #555;
+  font-size: 1.1rem;
 }

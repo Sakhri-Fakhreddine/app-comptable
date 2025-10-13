@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class MailingController extends Controller
 {
@@ -48,6 +49,27 @@ class MailingController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Email sent from accountant']);
     }
+
+    public function contactUs(Request $request)
+    {
+        log::info("submitting a contact mail ....");
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'subject' => 'required|string',
+            'message' => 'required|string',
+        ]);
+
+        Mail::raw($validated['message'], function ($msg) use ($validated) {
+            $msg->to('support@yourdomain.com')
+                ->subject($validated['subject'])
+                ->from($validated['email'], $validated['name'])
+                ->replyTo($validated['email'], $validated['name']);
+        });
+
+        return response()->json(['success' => true, 'message' => 'Mail envoyé avec succès']);
+    }
+
 
    
 }
