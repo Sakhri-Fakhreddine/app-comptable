@@ -1,0 +1,133 @@
+<!-- Banner -->
+<div class="banner header-text"></div>
+
+<!-- Declarations Table -->
+<div class="latest-products" *ngIf="isAuthenticated; else notLoggedIn">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card shadow-sm clients-card">
+          <div class="card-header">
+            <h5>Toutes les déclarations</h5>
+          </div>
+
+          <div class="card-body">
+            <!-- Loader -->
+            <div *ngIf="isLoading" class="text-center my-3">
+              <p>Patientez ...</p>
+            </div>
+
+            <!-- Accordion for months -->
+            <ng-container *ngIf="!isLoading && declarations.length > 0">
+              <div *ngFor="let group of (groupedDeclarations | keyvalue)" class="mb-3 border rounded shadow-sm">
+                <!-- Header -->
+                <div 
+                  class="d-flex justify-content-between align-items-center p-3 bg-light hover-pointer"
+                  (click)="toggleMonth(group.key)"
+                  style="cursor: pointer;"
+                >
+                  <h5 class="m-0">
+                    📅 {{ group.key }}
+                    <span class="text-muted small">
+                      ({{ group.value?.length || 0 }} déclaration(s))
+                    </span>
+                  </h5>
+                  <i 
+                    class="fa"
+                    [ngClass]="{
+                      'fa-chevron-down': !isMonthExpanded(group.key),
+                      'fa-chevron-up': isMonthExpanded(group.key)
+                    }"
+                  ></i>
+                </div>
+
+                <!-- Declarations Table -->
+                <div 
+                  *ngIf="isMonthExpanded(group.key)" 
+                  class="p-3"
+                  style="animation: fadeIn 0.3s ease;"
+                >
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover custom-table align-middle">
+                      <thead class="table-header-custom">
+                        <tr>
+                          <th>ID</th>
+                          <th>Type</th>
+                          <th>Client</th>
+                          <th>Date Déclaration</th>
+                          <th>État</th>
+                          <th>Document</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let dec of group.value">
+                          <td>{{ dec.id }}</td>
+                          <td>{{ dec.typedeclaration }}</td>
+                          <td>{{ dec.client_name }}</td>
+                          <td>{{ dec.datedeclaration | date: 'dd/MM/yyyy' }}</td>
+                          <td>
+                            <span
+                              class="badge px-3 py-3"
+                              [ngClass]="{
+                                'bg-warning text-dark': dec.etat_declaration === 'en cours' || dec.etat_declaration === 'En cours',
+                                'bg-success': dec.etat_declaration === 'traitée' || dec.etat_declaration === 'traitee',
+                                'bg-danger': dec.etat_declaration === 'refusée' || dec.etat_declaration === 'refusee'
+                              }"
+                            >
+                              {{ dec.etat_declaration }}
+                            </span>
+                          </td>
+                          <td>
+                            <a *ngIf="dec.document" [href]="dec.document" target="_blank" class="btn btn-outline-dark btn-sm">
+                              Voir
+                            </a>
+                            <span *ngIf="!dec.document" class="text-muted">Aucun</span>
+                          </td>
+                          <td>
+                            <button *ngIf="dec.etat_declaration === 'en cours' || dec.etat_declaration === 'En cours'"
+                              class="btn btn-dark-golden btn-md"
+                              [routerLink]="['/edit-declaration', dec.id]"
+                            >
+                              Modifier
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- No Declarations -->
+            <p *ngIf="!isLoading && declarations.length === 0" class="text-center">
+              Aucune déclaration trouvée.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Not Logged In -->
+<ng-template #notLoggedIn>
+  <div class="container my-5 text-center">
+    <p>Veuillez vous connecter pour voir vos déclarations.</p>
+    <a routerLink="/login" class="btn btn-dark-golden">Se connecter</a>
+  </div>
+</ng-template>
+
+<!-- Small fade animation -->
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hover-pointer:hover {
+  background-color: #f8f9fa;
+}
+</style>

@@ -30,6 +30,8 @@ import { Clientinfo } from './Components/comptable/clientinfo/clientinfo';
 import { Settingslist } from './Components/comptable/settingslist/settingslist';
 import { AddsettingsComponent } from './Components/comptable/addsettings/addsettings.component';
 import { Clientinformations } from './Components/admin/clientcomptables/clientinformations/clientinformations';
+import { Declarations } from './Components/comptable/declaration/declarations/declarations';
+import { Editdeclaration } from './Components/comptable/declaration/editdeclaration/editdeclaration';
 
 export const routes: Routes = [
     {
@@ -49,7 +51,9 @@ export const routes: Routes = [
             { path : 'createclient', component: CreateclientComponent},
             { path: 'client-info/:id', component: Clientinfo },
             { path: 'settingslist', component: Settingslist},
-            { path: 'addsettings/:id', component:AddsettingsComponent}
+            { path: 'addsettings/:id', component:AddsettingsComponent},
+            { path: 'declarations', component:Declarations},
+            { path: 'edit-declaration/:id', component: Editdeclaration },
             ]
     },
     {path:"admin",component :AdminhomeComponent,

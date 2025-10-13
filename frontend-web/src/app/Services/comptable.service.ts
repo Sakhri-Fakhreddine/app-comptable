@@ -82,4 +82,24 @@ sendEmail(emailData: { recipient: string; subject: string; message: string }): O
   return this.http.post(`${this.apiUrl}/send-email`, emailData, { headers });
 }
 
+getDeclarations() {
+  const token = localStorage.getItem('token');
+  return this.http.get(`${this.apiUrl}/declarations`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
+getDeclaration(id: number) {
+  const token = localStorage.getItem('token');
+  return this.http.get(`${this.apiUrl}/declarations/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
+
+updateDeclaration(id: number, data: any) {
+  const token = localStorage.getItem('token');
+  return this.http.put(`${this.apiUrl}/declarations/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
+
 }

@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Models\declarations;
+use App\Models\ligne_lignedecalarations;
+use App\Models\lignedeclarations;
 
 class ComptableController extends Controller
 {
@@ -156,5 +160,103 @@ public function getComptableById($id)
     }
 
 
+    public function getDeclarations(Request $request)
+    {
+        Log::info("🔹 Fetching declarations for related comptable...");
+    
+        try {
+            $user = Auth::user();
+            Log::info("👤 Authenticated user ID: {$user->id}, type: {$user->usertype}");
+    
+            // ✅ Ensure the user is a comptable
+            if ($user->usertype !== 'comptable') {
+                Log::warning("⚠️ Unauthorized access attempt by user ID: {$user->id}");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 403);
+            }
+    
+            // ✅ Fetch the authenticated comptable
+            $comptable = Comptables::where('email', $user->email)->first();
+            if (!$comptable) {
+                Log::warning("⚠️ No comptable found for user ID: {$user->id}");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Comptable introuvable.'
+                ], 404);
+            }
+    
+            Log::info("✅ Authenticated comptable: {$comptable->idComptable}");
+    
+            // ✅ Get all clients linked to this comptable
+            $clients = Clients_comptables::where('id_comptable', $comptable->idComptable)->get();
+            Log::info("👥 Found {$clients->count()} clients for comptable {$comptable->idComptable}");
+    
+            $allDeclarations = collect(); // will store declarations for all clients
+    
+            foreach ($clients as $client) {
+                Log::info("📂 Fetching declarations for client ID: {$client->idClients}");
+                $clientname = $client->Nomprenom ?? 'Inconnu'; 
+                
+    
+                $declarations = declarations::with(['lignedeclarations.lignes'])
+                    ->where('Clients_comptable_idClients', $client->idClients)
+                    ->orderBy('datedeclaration', 'desc')
+                    ->get();
+    
+                Log::info("📦 Found {$declarations->count()} declarations for client ID {$client->idClients}");
+    
+                // Map and format declarations
+                $formatted = $declarations->map(function ($declaration) use ($clientname) {
+                    Log::info("📝 Processing declaration ID: {$declaration->iddeclarations}");
+                    Log::info("📂 client name : {$clientname}");
+    
+                    return [
+                        'id' => $declaration->iddeclarations,
+                        'typedeclaration' => $declaration->typedeclaration,
+                        'client_name' => $clientname,
+                        'anneemois' => $declaration->anneemois,
+                        'etat_declaration' => $declaration->etat_declaration,
+                        'document' => $declaration->document ? asset('storage/' . $declaration->document) : null,
+                        'datedeclaration' => $declaration->datedeclaration,
+                        'lines' => $declaration->lignedeclarations->map(function ($line) {
+                            Log::info("   ➖ Processing ligne ID: {$line->idlignedeclarations}");
+                            return [
+                                'id' => $line->idlignedeclarations,
+                                'libelle' => $line->libelle,
+                                'values' => $line->lignes->map(function ($subLine) {
+                                    Log::info("      📄 Ligne_lignedecalarations param_id: {$subLine->lignes_parametres_decalarations_idlignes_parametres_decalarations}, valeur: {$subLine->valeurs}");
+                                    return [
+                                        'param_id' => $subLine->lignes_parametres_decalarations_idlignes_parametres_decalarations,
+                                        'valeur' => $subLine->valeurs,
+                                    ];
+                                }),
+                            ];
+                        }),
+                    ];
+                });
+    
+                $allDeclarations = $allDeclarations->merge($formatted);
+            }
+    
+            Log::info("✅ Successfully gathered {$allDeclarations->count()} total declarations.");
+    
+            return response()->json([
+                'success' => true,
+                'data' => $allDeclarations,
+            ], 200);
+    
+        } catch (\Exception $e) {
+            Log::error("💥 Error fetching client declarations: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur serveur: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
 
 }

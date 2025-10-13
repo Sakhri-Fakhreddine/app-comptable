@@ -64,6 +64,9 @@ Route::post('/admin/send-email', [MailingController::class, 'sendEmail']);
     Route::post('/declarationsettings', [DeclarationController::class, 'createDeclarationSettings']);
     Route::get('/comptable/{id}', [ComptableController::class, 'getComptableById']);
     Route::post('/send-email', [MailingController::class, 'sendEmailFromAccountant']);
+    Route::get('/declarations', [ComptableController::class, 'getDeclarations']);
+    Route::get('/declarations/{id}', [DeclarationController::class, 'getDeclarationById']);
+    // Route::post('/declarations/{id}', [DeclarationController::class, 'updateDeclaration']);
 
  });
 
