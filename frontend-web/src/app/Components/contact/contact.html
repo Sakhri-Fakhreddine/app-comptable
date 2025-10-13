@@ -15,30 +15,34 @@
           <div class="card-body">
             <div class="contact-container" *ngIf="!isLoading; else loading">
               <form [formGroup]="contactForm" (ngSubmit)="sendMessage()" class="contact-form">
-                <div class="form-group mb-3">
-                  <label for="name">
-                    <i class="fa-solid fa-person"></i>
-                    Nom complet</label>
-                  <input id="name" type="text" formControlName="name" class="form-control" placeholder="Entrez votre nom">
-                  <div *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched" class="text-danger small">
-                    Le nom est obligatoire et doit comporter au moins 3 caractères.
-                  </div>
-                </div>
 
-                <div class="form-group mb-3">
-                  <label for="email">
-                    <i class="fa-solid fa-envelope"></i>
-                    Adresse e-mail</label>
-                  <input id="email" type="email" formControlName="email" class="form-control" placeholder="exemple@email.com">
-                  <div *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="text-danger small">
-                    Entrez une adresse e-mail valide.
+                <!-- Name + Email in same row -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="name">
+                      <i class="fa-solid fa-person"></i> Nom complet
+                    </label>
+                    <input id="name" type="text" formControlName="name" class="form-control" placeholder="Entrez votre nom">
+                    <div *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched" class="text-danger small">
+                      Le nom est obligatoire et doit comporter au moins 3 caractères.
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="email">
+                      <i class="fa-solid fa-envelope"></i> Adresse e-mail
+                    </label>
+                    <input id="email" type="email" formControlName="email" class="form-control" placeholder="exemple@email.com">
+                    <div *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="text-danger small">
+                      Entrez une adresse e-mail valide.
+                    </div>
                   </div>
                 </div>
 
                 <div class="form-group mb-3">
                   <label for="subject">
-                    <i class="fa-solid fa-pencil"></i>
-                    Sujet</label>
+                    <i class="fa-solid fa-pencil"></i> Sujet
+                  </label>
                   <input id="subject" type="text" formControlName="subject" class="form-control" placeholder="Sujet du message">
                   <div *ngIf="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched" class="text-danger small">
                     Le sujet est obligatoire.
@@ -47,8 +51,8 @@
 
                 <div class="form-group mb-3">
                   <label for="message">
-                    <i class="fa-solid fa-comment"></i>
-                    Message</label>
+                    <i class="fa-solid fa-comment"></i> Message
+                  </label>
                   <textarea id="message" formControlName="message" rows="5" class="form-control" placeholder="Écrivez votre message ici..."></textarea>
                   <div *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched" class="text-danger small">
                     Le message doit comporter au moins 10 caractères.
@@ -68,6 +72,14 @@
                   </button>
                 </div>
               </form>
+
+              <!-- Our contact info -->
+              <div class="contact-info mt-5 p-3 rounded shadow-sm">
+                <h6 class="fw-bold mb-3"> <i class="fa-solid fa-address-card me-3"></i>Nos coordonnées</h6>
+                <p><i class="fa-solid fa-phone text-dark-golden me-2"></i> +216 99 123 456</p>
+                <p><i class="fa-solid fa-location-dot text-dark-golden me-2"></i> Avenue Habib Bourguiba, Tunis, Tunisie</p>
+                <p><i class="fa-solid fa-envelope text-dark-golden me-2"></i> Accounting@mail.com</p>
+              </div>
             </div>
 
             <ng-template #loading>
@@ -80,11 +92,3 @@
     </div>
   </div>
 </div>
-
-<!-- Fade animation -->
-<style>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
