@@ -65,6 +65,7 @@ Route::post('/admin/send-email', [MailingController::class, 'sendEmail']);
     Route::get('/comptable/{id}', [ComptableController::class, 'getComptableById']);
     Route::post('/send-email', [MailingController::class, 'sendEmailFromAccountant']);
     Route::get('/declarations', [ComptableController::class, 'getDeclarations']);
+    Route::get('/clientdeclarations/{id}', [ComptableController::class, 'getDeclarationsByClientId']);
     Route::get('/declarations/{id}', [DeclarationController::class, 'getDeclarationById']);
     Route::put('/declarations/{id}', [DeclarationController::class, 'updateDeclaration']); 
     Route::get('/notifications', [NotificationController::class, 'getComptableNotifications']);

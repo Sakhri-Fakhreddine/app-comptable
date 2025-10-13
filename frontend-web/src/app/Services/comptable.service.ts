@@ -101,5 +101,12 @@ updateDeclaration(id: number, data: any) {
     headers: { Authorization: `Bearer ${token}` }
   });
 }
+getDeclarationsByClientId(id: number) {
+  const token = localStorage.getItem('token');
+  return this.http.get(`${this.apiUrl}/clientdeclarations/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
+
 
 }

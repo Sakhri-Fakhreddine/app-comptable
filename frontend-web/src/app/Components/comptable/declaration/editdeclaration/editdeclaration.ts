@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ComptableService } from '../../../../Services/comptable.service';
 import { CommonModule } from '@angular/common';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-editdeclaration',
   imports: [CommonModule, RouterModule,ReactiveFormsModule ],
@@ -20,7 +20,8 @@ export class Editdeclaration implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
-    private comptableService: ComptableService
+    private comptableService: ComptableService,
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
@@ -142,6 +143,10 @@ export class Editdeclaration implements OnInit {
       popup?.print();
       popup?.close();
     }
+  }
+
+  goBack(): void {
+    this.location.back();
   }
   
 }

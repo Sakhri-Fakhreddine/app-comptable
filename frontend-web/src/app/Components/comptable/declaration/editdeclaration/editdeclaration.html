@@ -58,7 +58,10 @@
                 <!-- Buttons -->
                 <div class="mt-3" align="center">
                   <button type="submit" class="btn btn-dark-golden me-3"><i class="fa-solid fa-floppy-disk me-2"></i>Sauvegarder</button>
-                  <a routerLink="/declarations" class="btn btn-outline-secondary"> <i class="fa-solid fa-turn-up"></i>Annuler</a>
+                  <button type="button" class="btn btn-outline-secondary ms-2" (click)="goBack()">
+                    <i class="fa-solid fa-turn-up"></i> Annuler
+                  </button>
+                  
                   
                 </div>
               </form>

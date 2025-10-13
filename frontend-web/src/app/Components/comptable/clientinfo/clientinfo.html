@@ -79,11 +79,17 @@
             Contacter Client
           </button>
           </div>
+          <div class="action-buttons">
+            <button  class="btn-dark-golden" (click)="ClientDeclarations(client.idClients)">
+              <i class="fa-solid fa-clipboard-list"></i>
+            Declarations du client</button>
+          </div>
       <div class="action-buttons">
         <button  class="btn-deactivate" (click)="DeleteClient(client.idClients)">
         <i class="fa-solid fa-trash"></i>
         Supprimer Compte client</button>
       </div>
+      
         
       </div>
       

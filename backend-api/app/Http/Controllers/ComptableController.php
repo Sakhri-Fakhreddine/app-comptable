@@ -259,4 +259,89 @@ public function getComptableById($id)
     }
     
 
+    public function getDeclarationsByClientId($id)
+    {
+        Log::info("🔹 Fetching declarations client with ID : {$id}");
+    
+        try {
+            $user = Auth::user();
+            Log::info("👤 Authenticated user ID: {$user->id}, type: {$user->usertype}");
+    
+            // ✅ Ensure the user is a comptable
+            if ($user->usertype !== 'comptable') {
+                Log::warning("⚠️ Unauthorized access attempt by user ID: {$user->id}");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 403);
+            }
+    
+            // ✅ Fetch the authenticated comptable
+            $comptable = Comptables::where('email', $user->email)->first();
+            if (!$comptable) {
+                Log::warning("⚠️ No comptable found for user ID: {$user->id}");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Comptable introuvable.'
+                ], 404);
+            }
+    
+            Log::info("✅ Authenticated comptable: {$comptable->idComptable}");
+    
+            // Fetch all declarations of this client
+            $declarations = declarations::with([
+                'lignedeclarations.lignes',
+            ])
+            ->where('Clients_comptable_idClients', $id)
+            ->orderBy('datedeclaration', 'desc')
+            ->get();
+
+            Log::info("📦 Declarations fetched: " . $declarations->count());
+
+            // Format response
+            $result = $declarations->map(function($declaration) {
+                Log::info("📝 Processing declaration ID: {$declaration->iddeclarations}");
+                return [
+                    'id' => $declaration->iddeclarations,
+                    'typedeclaration' => $declaration->typedeclaration,
+                    'anneemois' => $declaration->anneemois,
+                    'etat_declaration' => $declaration->etat_declaration,
+                    Log::info("etat declaration : {$declaration->etat_declaration}"),
+                    'document' => $declaration->document ? asset('storage/' . $declaration->document) : null,
+                    'datedeclaration' => $declaration->datedeclaration,
+                    'lines' => $declaration->lignedeclarations->map(function($line) {
+                        Log::info("   ➖ Processing ligne ID: {$line->idlignedeclarations}");
+                        return [
+                            'id' => $line->idlignedeclarations,
+                            'libelle' => $line->libelle,
+                            'values' => $line->lignes->map(function($subLine) {
+                                Log::info("      📄 Ligne_lignedecalarations param_id: {$subLine->lignes_parametres_decalarations_idlignes_parametres_decalarations}, valeur: {$subLine->valeurs}");
+                                return [
+                                    'param_id' => $subLine->lignes_parametres_decalarations_idlignes_parametres_decalarations,
+                                    'valeur' => $subLine->valeurs,
+                                ];
+                            }),
+                        ];
+                    }),
+                ];
+            });
+    
+            Log::info("✅ Successfully gathered {$declarations->count()} total declarations.");
+    
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+            ], 200);
+    
+        } catch (\Exception $e) {
+            Log::error("💥 Error fetching client declarations: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur serveur: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

@@ -32,6 +32,7 @@ import { AddsettingsComponent } from './Components/comptable/addsettings/addsett
 import { Clientinformations } from './Components/admin/clientcomptables/clientinformations/clientinformations';
 import { Declarations } from './Components/comptable/declaration/declarations/declarations';
 import { Editdeclaration } from './Components/comptable/declaration/editdeclaration/editdeclaration';
+import { Clientsdeclarations } from './Components/comptable/declaration/clientsdeclarations/clientsdeclarations';
 
 export const routes: Routes = [
     {
@@ -54,6 +55,8 @@ export const routes: Routes = [
             { path: 'addsettings/:id', component:AddsettingsComponent},
             { path: 'declarations', component:Declarations},
             { path: 'edit-declaration/:id', component: Editdeclaration },
+            { path: 'client/:id/declarations', component: Clientsdeclarations }
+
             ]
     },
     {path:"admin",component :AdminhomeComponent,

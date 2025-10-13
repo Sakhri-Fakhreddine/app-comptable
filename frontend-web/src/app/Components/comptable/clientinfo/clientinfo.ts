@@ -99,7 +99,11 @@ export class Clientinfo implements OnInit {
       });
     }
   }
-
+  ClientDeclarations(id: number): void {
+    if (!id) return;
+    this.router.navigate([`/client/${id}/declarations`]);
+  }
+  
   // Email modal submit
   sendEmail(emailData: any) {
     if (!this.client?.email) return;
