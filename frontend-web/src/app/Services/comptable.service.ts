@@ -107,6 +107,24 @@ getDeclarationsByClientId(id: number) {
     headers: { Authorization: `Bearer ${token}` }
   });
 }
+getComptable() {
+  const token = localStorage.getItem('token');
+  return this.http.get(`${this.apiUrl}/profile`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
+updateProfile( data: any) {
+  const token = localStorage.getItem('token');
+  return this.http.put(`${this.apiUrl}/profile/update`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
+resetPassword( data: any) {
+  const token = localStorage.getItem('token');
+  return this.http.put(`${this.apiUrl}/reset-password`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
 
 
 }

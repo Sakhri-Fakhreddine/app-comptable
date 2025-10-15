@@ -344,4 +344,67 @@ public function getComptableById($id)
         }
     }
 
+
+    public function getProfile()
+    {
+        $user = Auth::user(); 
+        $comptable = Comptables::where('email',$user->email)->first();
+        return response()->json($comptable);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        $comptable = Comptables::where('email',$user->email)->first();
+
+        $validated = $request->validate([
+            'Nomprenom' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:20',
+            'nom_commerciale' => 'nullable|string|max:255',
+            'registre_de_commerce' => 'nullable|string|max:255',
+            'code_tva' => 'nullable|string|max:255',
+        ]);
+
+            // ✅ Update comptable info
+        $comptable->update($validated);
+
+        // ✅ Update user info too (correct syntax)
+        $user->update([
+            'name' => $validated['Nomprenom'],
+            'email' => $validated['email'],
+        ]);
+
+        return response()->json(['message' => 'Profil mis à jour avec succès', 'comptable' => $comptable]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        // Validate inputs
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:6',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+    
+        $user = Auth::user();
+    
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur non authentifié.'], 401);
+        }
+    
+        // Verify the current password
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => '❌ Ancien mot de passe incorrect.'], 400);
+        }
+    
+        // Update password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+    
+        return response()->json(['message' => '✅ Mot de passe mis à jour avec succès.']);
+    }
+
 }
+
+

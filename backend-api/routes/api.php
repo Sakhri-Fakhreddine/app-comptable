@@ -71,6 +71,10 @@ Route::post('/admin/send-email', [MailingController::class, 'sendEmail']);
     Route::put('/declarations/{id}', [DeclarationController::class, 'updateDeclaration']); 
     Route::get('/notifications', [NotificationController::class, 'getComptableNotifications']);
     Route::post('/notifications/read', [NotificationController::class, 'markAsRead']);
+    Route::get('/profile', [ComptableController::class, 'getProfile']);
+    Route::put('/profile/update', [ComptableController::class, 'updateProfile']);
+    Route::put('/reset-password', [ComptableController::class, 'resetPassword']);
+
 
  });
 

@@ -43,7 +43,7 @@
               </td>
               <td>{{ demande.commentaire || 'Aucun Commentaire a afficher' }}</td>
               <td>
-                <a [routerLink]="['/admin/demande-info', demande.idDemande]" class="btn btn-info">
+                <a [routerLink]="['/admin/demande-info', demande.idDemande]" class="btn btn-custom2">
                   Voir les details de la demande
                 </a>
               </td>
@@ -51,7 +51,7 @@
           </tbody>
         </table>
   
-        <p *ngIf="filteredDemandes.length === 0 && !errorMessage">Aucune demande non trairtée trouvée.</p>
+        <p *ngIf="filteredDemandes.length === 0 && !errorMessage" align="center">Aucune demande non trairtée trouvée.</p>
         <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
       </div>
     </div>

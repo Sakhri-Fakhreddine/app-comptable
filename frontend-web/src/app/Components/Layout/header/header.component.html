@@ -23,7 +23,7 @@
               <li class="nav-item">
                 <a class="nav-link" [routerLink]="['/declarations']"><i class="fa-solid fa-clipboard-list me-2"></i>Declarations</a>
               </li>
-              <li class="nav-item topbar-icon dropdown hidden-caret">
+              <li class="nav-item topbar-icon dropdown hidden-caret me-5">
                 <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fa fa-bell"></i>
                   <span class="notification">{{ unreadNotifications.length }}</span>
@@ -51,66 +51,71 @@
                 </ul>
               </li>
               
+              
               <!-- Dropdown for profile actions  -->
-              <li class="nav-item topbar-user dropdown hidden-caret">
-                <a
-                  class="dropdown-toggle profile-pic dark-gold-dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                  href="#"
-                  aria-expanded="false"
-                >
-                  <div class="avatar-sm">
-                    <img
-                      src="adminassets/assets/img/profile.jpg"
-                      alt="profile"
-                      class="avatar-img rounded-circle"
-                    />
+             <!-- Profile Dropdown styled like Notification -->
+             <li class="nav-item topbar-icon dropdown hidden-caret">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="profileDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <i class="fa-solid fa-circle-user me-2"></i>
+                <strong>{{ userName }}</strong>
+              </a>
+            
+              <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="profileDropdown">
+                <!-- Profile Header inside dropdown -->
+                <li>
+                  <div class="dropdown-profile-header d-flex align-items-center p-3">
+                    <div class="profile-pic me-2">
+                      <i class="fa-solid fa-circle-user fa-2x"></i>
+                    </div>
+                    <div>
+                      <strong>{{ userName }}</strong><br />
+                      <small class="text-muted">Connecté</small>
+                    </div>
                   </div>
-                  <span class="profile-username">
-                    <span class="op-7">Hi,</span>
-                    <span class="fw-bold">{{ userName }}</span>
-                  </span>
+                </li>
+            
+                <li><div class="dropdown-divider my-1"></div></li>
+            
+                <a [routerLink]="['/profile']" class="dropdown-item d-flex align-items-center">
+                  <div class="notif-icon notif-primary">
+                    <i class="fa fa-user"></i>
+                  </div>
+                  <div class="notif-content">
+                    <span class="block">Mon Profil</span>
+                  </div>
                 </a>
-              
-                <ul
-                  class="dropdown-menu dropdown-user animated fadeInDown dark-gold-dropdown-menu dropdown-menu-end"
-                >
-                  <div class="dropdown-user-scroll scrollbar-outer p-2">
-                    <!-- User Box -->
-                    <li>
-                      <div class="user-box text-center p-3">
-                        <div class="avatar-lg mb-2">
-                          <img
-                            src="adminassets/assets/img/profile.jpg"
-                            alt="profile"
-                            class="avatar-img rounded"
-                          />
-                        </div>
-                        <div class="u-text">
-                          <h4>{{ userName }}</h4>
-                          <p class="text-muted">Hello {{ userName }}</p>
-                          <a
-                            [routerLink]="['/edit-profile']"
-                            class="btn btn-xs btn-secondary btn-sm"
-                          >
-                            Voir Profile
-                          </a>
-                        </div>
-                      </div>
-                    </li>
-              
-                    <li>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" [routerLink]="['/edit-profile']">Mon Profile</a>
-                      <a class="dropdown-item" href="#">Messages</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" [routerLink]="['/settingslist']">Parametres de Declatration</a>
-                      <div class="dropdown-divider"></div>
-                      <button class="dropdown-item" (click)="logout()">Déconnecter</button>
-                    </li>
+            
+                <a [routerLink]="['/settingslist']" class="dropdown-item d-flex align-items-center">
+                  <div class="notif-icon notif-warning">
+                    <i class="fa fa-cog"></i>
                   </div>
-                </ul>
-              </li>
+                  <div class="notif-content">
+                    <span class="block">Paramètres de Déclaration</span>
+                  </div>
+                </a>
+            
+                <li><div class="dropdown-divider my-1"></div></li>
+            
+                <button class="dropdown-item d-flex align-items-center w-100 border-0 bg-transparent" (click)="logout()">
+                  <div class="notif-icon notif-danger">
+                    <i class="fa fa-sign-out"></i>
+                  </div>
+                  <div class="notif-content">
+                    <span class="block text-danger">Déconnecter</span>
+                  </div>
+                </button>
+              </ul>
+            </li>
+            
+
               
               
             </ng-container>

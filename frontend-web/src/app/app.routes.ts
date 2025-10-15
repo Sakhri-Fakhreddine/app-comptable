@@ -34,6 +34,8 @@ import { Declarations } from './Components/comptable/declaration/declarations/de
 import { Editdeclaration } from './Components/comptable/declaration/editdeclaration/editdeclaration';
 import { Clientsdeclarations } from './Components/comptable/declaration/clientsdeclarations/clientsdeclarations';
 import { Contact } from './Components/contact/contact';
+import { Profile } from './Components/comptable/profile/profile';
+import { Resetpassword } from './Components/comptable/resetpassword/resetpassword';
 
 export const routes: Routes = [
     {
@@ -57,7 +59,9 @@ export const routes: Routes = [
             { path: 'declarations', component:Declarations},
             { path: 'edit-declaration/:id', component: Editdeclaration },
             { path: 'client/:id/declarations', component: Clientsdeclarations },
-            {path : 'contact',component:Contact}
+            { path : 'contact', component: Contact},
+            { path : 'profile', component: Profile},
+            { path: 'resetpassword', component: Resetpassword },
 
             ]
     },

@@ -119,23 +119,24 @@
   }
   
   /* Buttons */
-  .btn-info {
-    background-color: #007bff;
+  .btn-custom2 {
+    background-color: #00162e;
     border: none;
     border-radius: 0.25rem;
     padding: 0.5rem 1rem;
     color: white;
+    width: 100%;
     font-weight: 500;
     cursor: pointer;
     transition: 0.3s;
   }
   
-  .btn-info:hover {
-    background-color: #0056b3;
+  .btn-custom2:hover {
+    background-color: #004ea1;
   }
   /* Buttons */
   .btn-custom {
-    background-color: #c01600;
+    background-color: #8b1000;
     border: none;
     border-radius: 0.25rem;
     padding: 0.5rem 1rem;
@@ -148,7 +149,7 @@
   }
   
   .btn-custom:hover {
-    background-color: #ff3f05;
+    background-color: #912302;
   }
   
   /* Loading text */

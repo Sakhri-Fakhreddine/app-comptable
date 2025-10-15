@@ -1,0 +1,84 @@
+<div class="latest-products">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+        <div class="card shadow-sm clients-card">
+          <div class="card-header">
+            <h5 class="m-0">🧾 Modifier mes coordonnées</h5>
+          </div>
+
+          <div class="card-body">
+            <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+
+              <div class="mb-3">
+                <label>
+                  <i class="fa-solid fa-circle-user me-1"></i>
+                  Nom complet</label>
+                <input type="text" class="form-control" formControlName="Nomprenom">
+              </div>
+
+              <div class="row mb-3">
+                <div class="col">
+                  <label>
+                    <i class="fa-solid fa-building me-1"></i>
+                    Nom commercial</label>
+                  <input type="text" class="form-control" formControlName="nom_commerciale">
+                </div>
+                <div class="col">
+                  <label>
+                    <i class="fa-solid fa-barcode me-1"></i>
+                    Code TVA</label>
+                  <input type="text" class="form-control" formControlName="code_tva">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col">
+                  <label>
+                    <i class="fa-solid fa-cash-register me-1"></i>
+                    Registre de commerce</label>
+                  <input type="text" class="form-control" formControlName="registre_de_commerce">
+                </div>
+                <div class="col">
+                  <label>
+                    <i class="fa-solid fa-phone me-1"></i>
+                    Téléphone</label>
+                  <input type="text" class="form-control" formControlName="phone">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label>
+                  <i class="fa-solid fa-envelope me-1"></i>
+                  Email</label>
+                <input type="email" class="form-control" formControlName="email">
+              </div>
+
+              <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+              <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+              <div class="text-center mt-3">
+                <button 
+                  routerLink="/resetpassword" 
+                  class="btn btn-dark-golden mt-2">
+                  🔒 Changer le mot de passe
+                </button>
+                <br>
+                <button 
+                  type="submit" 
+                  class="btn btn-dark-golden w-80 mt-2" 
+                  [disabled]="profileForm.invalid || isLoading">
+                  💾 Enregistrer les modifications
+                </button>
+              </div>
+              
+              
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -77,20 +77,21 @@
     font-weight: 600;
   }
   
-  /* Buttons */
-  .btn-info {
-    background-color: #007bff;
+   /* Buttons */
+   .btn-custom2 {
+    background-color: #00162e;
     border: none;
     border-radius: 0.25rem;
     padding: 0.5rem 1rem;
     color: white;
+    width: 100%;
     font-weight: 500;
     cursor: pointer;
     transition: 0.3s;
   }
   
-  .btn-info:hover {
-    background-color: #0056b3;
+  .btn-custom2:hover {
+    background-color: #004ea1;
   }
   
   /* Loading text */

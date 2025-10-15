@@ -38,11 +38,15 @@ export class Declaration implements OnInit{
     loadDeclarationsettings(): void {
       this.isLoading = true;
       this.errorMessage = '';
+    
       this.adminService.getDeclarationsettings().subscribe({
         next: (res: any) => {
-          console.log('Fetched declarations:', res);
-          this.declarationsettings = res || [];
-          console.log('Fetched declarations:', this.declarationsettings);
+          // Keep only default settings (Comptables_idComptable is null)
+          this.declarationsettings = (res || []).filter(
+            (setting: any) => setting.Comptables_idComptable === null
+          );
+    
+          console.log('Default declarations:', this.declarationsettings);
           this.isLoading = false;
         },
         error: (err) => {
@@ -52,6 +56,7 @@ export class Declaration implements OnInit{
         }
       });
     }
+    
 
     AddDeclaration() {
       this.router.navigate(['/admin/adddeclarationsetting']);
